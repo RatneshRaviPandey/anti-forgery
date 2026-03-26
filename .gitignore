@@ -1,0 +1,62 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+client/build/
+
+# IDE / Editor
+.vscode/
+.idea/
+.vs/
+*.suo
+*.user
+*.sln.docuser
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# C# / .NET
+InfometaCodeGen/bin/
+InfometaCodeGen/obj/
+*.dll
+*.exe
+*.pdb
+
+# Backup / Copy folders
+*- Copy/
+* - Copy/
+
+# Next.js
+infometa/.next/
+infometa/out/
+infometa/node_modules/
+
+# Secrets / Brand key files
+InfometaCodeGen/*-key.json
+InfometaCodeGen/*.key.json
+
+# Misc
+server/node_modules/
+client/node_modules/
+*.tsbuildinfo
+
+# Solution file
+*.sln

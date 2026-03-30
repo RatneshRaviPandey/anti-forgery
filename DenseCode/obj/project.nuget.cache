@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "QMpie7W7VRQ=",
+  "success": true,
+  "projectFilePath": "C:\\My Data\\myExp\\DenseCode\\DenseCode.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ratnpandey\\.nuget\\packages\\microsoft.win32.systemevents\\8.0.0\\microsoft.win32.systemevents.8.0.0.nupkg.sha512",
+    "C:\\Users\\ratnpandey\\.nuget\\packages\\system.drawing.common\\8.0.0\\system.drawing.common.8.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

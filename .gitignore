@@ -60,3 +60,7 @@ client/node_modules/
 
 # Solution file
 *.sln
+
+# Large files
+*.zip
+New folder/infometa - Copy.zip

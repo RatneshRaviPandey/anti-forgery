@@ -167,6 +167,11 @@ static void GenerateCodesFlow(TokenV3Generator gen)
                 .Validate(n => n is >= 4 and <= 50
                     ? ValidationResult.Success()
                     : ValidationResult.Error("Must be between 4 and 50")));
+
+        string verifyUrl = AnsiConsole.Prompt(
+            new TextPrompt<string>("Verify [teal]base URL[/] (QR codes will link here):")
+                .DefaultValue(QrCodeExporter.VerifyBaseUrl));
+        QrCodeExporter.VerifyBaseUrl = verifyUrl;
     }
 
     if (!AnsiConsole.Confirm("Proceed with generation?"))
@@ -398,6 +403,8 @@ static void RunCliGenerate(string[] args)
     string? output = GetArg(args, "--output");
     bool generateQr = HasFlag(args, "--qr");
     int qrPixels = int.TryParse(GetArg(args, "--qr-size"), out var qp) ? qp : DefaultQrPixelsPerModule;
+    string? verifyUrl = GetArg(args, "--verify-url");
+    if (verifyUrl != null) QrCodeExporter.VerifyBaseUrl = verifyUrl;
 
     if (productName == null || sku == null || industry == null || batchCode == null)
     {
@@ -512,6 +519,7 @@ static void PrintCliHelp()
     Console.WriteLine("  --output dir                 Custom output directory (optional)");
     Console.WriteLine("  --qr                         Generate QR code PNG images");
     Console.WriteLine("  --qr-size 10                 Pixels per QR module (default: 10)");
+    Console.WriteLine("  --verify-url URL             Custom verify URL (default: https://infometa.tech/verify)");
 }
 
 // ══════════════════════════════════════════════════════════════

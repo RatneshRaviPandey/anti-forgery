@@ -13,6 +13,9 @@ public static class QrCodeExporter
     private const int LabelHeight = 60;
     private const int Padding = 20;
 
+    /// <summary>Base URL for verification. QR codes will encode: {VerifyBaseUrl}?code={token}</summary>
+    public static string VerifyBaseUrl { get; set; } = "https://infometa.tech/verify";
+
     /// <summary>
     /// Export a single QR code PNG image for the given token.
     /// </summary>
@@ -54,8 +57,11 @@ public static class QrCodeExporter
     /// </summary>
     public static byte[] GeneratePng(string token, QrLabelInfo? label = null, int pixelsPerModule = DefaultModulePixels)
     {
+        // Encode a verification URL so scanning auto-opens the browser
+        string qrContent = $"{VerifyBaseUrl}?code={Uri.EscapeDataString(token)}";
+
         using var qrGenerator = new QRCodeGenerator();
-        QRCodeData qrData = qrGenerator.CreateQrCode(token, QRCodeGenerator.ECCLevel.M);
+        QRCodeData qrData = qrGenerator.CreateQrCode(qrContent, QRCodeGenerator.ECCLevel.M);
 
         int moduleCount = qrData.ModuleMatrix.Count;
         int qrSize = moduleCount * pixelsPerModule;

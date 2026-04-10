@@ -34,8 +34,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # C# / .NET
-InfometaCodeGen/bin/
-InfometaCodeGen/obj/
+**/bin/Debug/
+**/bin/Release/
+**/obj/
 *.dll
 *.exe
 *.pdb
@@ -50,8 +51,8 @@ infometa/out/
 infometa/node_modules/
 
 # Secrets / Brand key files
-InfometaCodeGen/*-key.json
-InfometaCodeGen/*.key.json
+*-key.json
+*.key.json
 
 # Misc
 server/node_modules/
@@ -63,4 +64,6 @@ client/node_modules/
 
 # Large files
 *.zip
-New folder/infometa - Copy.zip
+
+# Package lock (infometa)
+infometa/package-lock.json

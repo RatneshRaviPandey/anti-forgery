@@ -12,8 +12,8 @@ import io.flutter.plugin.common.MethodChannel
 import java.util.Calendar
 
 class MainActivity : FlutterActivity() {
-    private val USAGE_CHANNEL = "com.detoxify.app/usage_stats"
-    private val BLOCKER_CHANNEL = "com.detoxify.app/app_blocker"
+    private val USAGE_CHANNEL = "com.screendetox.app/usage_stats"
+    private val BLOCKER_CHANNEL = "com.screendetox.app/app_blocker"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

@@ -65,9 +65,13 @@ class GoalsNotifier extends StateNotifier<GoalsState> {
       } catch (_) {}
     }
 
-    // Load blocking mode from native side
-    final mode = await _blocker.getBlockingMode();
-    final accEnabled = await _blocker.isAccessibilityEnabled();
+    // Load blocking mode from native side (may fail on web or if channel not ready)
+    String mode = blockingModeNone;
+    bool accEnabled = false;
+    try {
+      mode = await _blocker.getBlockingMode();
+      accEnabled = await _blocker.isAccessibilityEnabled();
+    } catch (_) {}
 
     state = GoalsState(
       dailyGoalMinutes: daily,
@@ -103,17 +107,19 @@ class GoalsNotifier extends StateNotifier<GoalsState> {
   }
 
   Future<void> setBlockingMode(String mode) async {
-    await _blocker.setBlockingMode(mode);
     state = state.copyWith(blockingMode: mode);
+    try { await _blocker.setBlockingMode(mode); } catch (_) {}
   }
 
   Future<void> openAccessibilitySettings() async {
-    await _blocker.openAccessibilitySettings();
+    try { await _blocker.openAccessibilitySettings(); } catch (_) {}
   }
 
   Future<void> recheckAccessibility() async {
-    final enabled = await _blocker.isAccessibilityEnabled();
-    state = state.copyWith(isAccessibilityEnabled: enabled);
+    try {
+      final enabled = await _blocker.isAccessibilityEnabled();
+      state = state.copyWith(isAccessibilityEnabled: enabled);
+    } catch (_) {}
   }
 }
 

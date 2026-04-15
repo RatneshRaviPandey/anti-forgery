@@ -62,12 +62,14 @@ class UsageTrackingNotifier extends StateNotifier<UsageTrackingState> {
   }
 
   Future<void> _init() async {
-    final hasPerm = await _service.hasPermission();
-    state = state.copyWith(hasPermission: hasPerm);
-    if (hasPerm) {
-      await startTracking();
-      await fetchUsage();
-    }
+    try {
+      final hasPerm = await _service.hasPermission();
+      state = state.copyWith(hasPermission: hasPerm);
+      if (hasPerm) {
+        try { await startTracking(); } catch (_) {}
+        try { await fetchUsage(); } catch (_) {}
+      }
+    } catch (_) {}
     state = state.copyWith(isLoading: false);
   }
 
@@ -83,12 +85,14 @@ class UsageTrackingNotifier extends StateNotifier<UsageTrackingState> {
   }
 
   Future<void> recheckPermission() async {
-    final hasPerm = await _service.hasPermission();
-    state = state.copyWith(hasPermission: hasPerm);
-    if (hasPerm && !state.isTracking) {
-      await startTracking();
-      await fetchUsage();
-    }
+    try {
+      final hasPerm = await _service.hasPermission();
+      state = state.copyWith(hasPermission: hasPerm);
+      if (hasPerm && !state.isTracking) {
+        try { await startTracking(); } catch (_) {}
+        try { await fetchUsage(); } catch (_) {}
+      }
+    } catch (_) {}
   }
 
   Future<void> startTracking() async {

@@ -45,7 +45,7 @@ export default function AdminUsersPage() {
     if (search) params.set('search', search);
 
     fetch(`/api/superadmin/users?${params}`, {
-      headers: { Authorization: `Bearer ${token}` },
+      credentials: 'include',
     })
       .then(r => r.json())
       .then(data => {
@@ -61,11 +61,9 @@ export default function AdminUsersPage() {
   async function updateUser(id: string, updates: Record<string, unknown>) {
     setActionLoading(id);
     try {
-      const res = await fetch(`/api/superadmin/users/${id}`, {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates),
-      });
+      const res = await fetch(`/api/superadmin/users/${id}`, { credentials: 'include', method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates), });
       if (res.ok) fetchUsers();
     } catch { /* ignore */ }
     setActionLoading(null);

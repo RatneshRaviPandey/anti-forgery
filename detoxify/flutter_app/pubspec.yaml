@@ -1,0 +1,54 @@
+name: screendetox
+description: Social Media Detox & Mindfulness App — 100% Open Source
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management (MIT)
+  flutter_riverpod: ^2.5.0
+
+  # Navigation (BSD)
+  go_router: ^14.0.0
+
+  # HTTP (MIT)
+  dio: ^5.4.0
+
+  # Local Storage (BSD)
+  shared_preferences: ^2.2.0
+  flutter_secure_storage: ^9.2.0
+
+  # UI (MIT/BSD)
+  fl_chart: ^0.68.0
+  percent_indicator: ^4.2.0
+  flutter_animate: ^4.5.0
+
+  # Audio for meditation (Apache 2.0)
+  just_audio: ^0.9.37
+
+  # In-App Purchase — official Flutter plugin (BSD)
+  in_app_purchase: ^3.2.0
+
+  # Utils (BSD/MIT)
+  intl: ^0.19.0
+  uuid: ^4.4.0
+  json_annotation: ^4.9.0
+  path_provider: ^2.1.0
+  url_launcher: ^6.2.0
+  package_info_plus: ^8.0.0
+  connectivity_plus: ^6.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.0
+  json_serializable: ^6.8.0
+
+flutter:
+  uses-material-design: true

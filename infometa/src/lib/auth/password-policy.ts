@@ -97,6 +97,9 @@ export async function isPasswordBreached(password: string): Promise<boolean> {
     const text  = await response.text();
     return text.split('\n').some(line => line.startsWith(suffix));
   } catch {
-    return false;
+    // Fail secure: if we can't check the breach database, reject the password
+    // to prevent compromised passwords from being accepted.
+    console.warn('[Security] HIBP breach check failed — rejecting password as precaution');
+    return true;
   }
 }

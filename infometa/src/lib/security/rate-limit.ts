@@ -3,6 +3,18 @@ import { redis } from '@/lib/redis';
 
 const inMemoryStore = new Map<string, { count: number; resetAt: number }>();
 
+// Periodic cleanup of expired entries to prevent memory leak
+const CLEANUP_INTERVAL = 60_000; // 1 minute
+let lastCleanup = Date.now();
+function cleanupExpiredEntries() {
+  const now = Date.now();
+  if (now - lastCleanup < CLEANUP_INTERVAL) return;
+  lastCleanup = now;
+  for (const [key, entry] of inMemoryStore) {
+    if (entry.resetAt < now) inMemoryStore.delete(key);
+  }
+}
+
 export async function applyRateLimit(
   _req: NextRequest,
   limiterKey: string,
@@ -26,6 +38,7 @@ export async function applyRateLimit(
   }
 
   // Fallback to in-memory rate limiting
+  cleanupExpiredEntries();
   const now = Date.now();
   const entry = inMemoryStore.get(limiterKey);
 

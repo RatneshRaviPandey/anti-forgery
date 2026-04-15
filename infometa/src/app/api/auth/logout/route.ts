@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { validateSession, revokeSession } from '@/lib/auth/session';
 import { apiResponse } from '@/lib/utils/response';
 import { writeAuditLog, SecurityEvents } from '@/lib/security/audit';
@@ -9,7 +9,8 @@ import { sessions } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 
 export async function POST(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '');
+  const token = req.cookies.get('infometa-session')?.value
+    ?? req.headers.get('authorization')?.replace('Bearer ', '');
   if (!token) return apiResponse.unauthorized('No token provided');
 
   const session = await validateSession(token);
@@ -32,5 +33,15 @@ export async function POST(req: NextRequest) {
     ipAddress: getClientIP(req),
   });
 
-  return apiResponse.success({ message: 'Logged out successfully' });
+  // Clear the httpOnly cookie
+  const response = NextResponse.json({ success: true, data: { message: 'Logged out successfully' } });
+  response.cookies.set('infometa-session', '', {
+    httpOnly: true,
+    secure:   process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path:     '/',
+    maxAge:   0,
+  });
+
+  return response;
 }

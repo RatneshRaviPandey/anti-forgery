@@ -22,7 +22,7 @@ export default function TeamSettings() {
   useEffect(() => {
     if (!token) return;
     fetch('/api/portal/team', {
-      headers: { Authorization: `Bearer ${token}` },
+      credentials: 'include',
     })
       .then(r => r.json())
       .then(d => { if (d.success) setMembers(d.data); })
@@ -33,9 +33,8 @@ export default function TeamSettings() {
     e.preventDefault();
     setInviting(true);
     try {
-      const res = await fetch('/api/portal/team', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      const res = await fetch('/api/portal/team', { credentials: 'include', method: 'POST',
+        headers: { 'Content-Type': 'application/json', },
         body: JSON.stringify({ email: inviteEmail, name: inviteName, role: inviteRole }),
       });
       const data = await res.json();

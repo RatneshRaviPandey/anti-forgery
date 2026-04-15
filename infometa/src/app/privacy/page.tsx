@@ -4,7 +4,7 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "Infometa Technologies Privacy Policy. Learn how we handle data, protect consumer privacy, and ensure compliance with GDPR and Indian data protection laws.",
-  alternates: { canonical: "https://infometa.tech/privacy" },
+  alternates: { canonical: "https://infometa.in/privacy" },
 };
 
 export default function PrivacyPage() {
@@ -67,7 +67,7 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">8. Your Rights</h2>
-          <p>You have the right to access, correct, or delete your personal data. For brand portal users, you can manage your data through account settings. For any data requests, contact us at privacy@infometa.tech.</p>
+          <p>You have the right to access, correct, or delete your personal data. For brand portal users, you can manage your data through account settings. For any data requests, contact us at privacy@infometa.in.</p>
         </section>
 
         <section>
@@ -78,7 +78,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-xl font-semibold text-foreground">10. Contact</h2>
           <p>For privacy-related questions or requests:</p>
-          <p>Email: privacy@infometa.tech<br />Infometa Technologies Pvt. Ltd., HSR Layout, Bangalore, Karnataka 560102, India</p>
+          <p>Email: privacy@infometa.in<br />Infometa Technologies Pvt. Ltd., HSR Layout, Bangalore, Karnataka 560102, India</p>
         </section>
       </div>
     </div>

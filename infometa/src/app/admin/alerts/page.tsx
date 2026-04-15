@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { alerts as mockAlerts, type Alert } from "@/lib/mock-data";
 import { useAlerts } from "@/hooks/use-api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,41 +9,27 @@ import { cn } from "@/lib/utils";
 export default function AlertsPage() {
   const [filter, setFilter] = useState<string>("all");
   const resolved = filter === "active" ? "false" : filter === "resolved" ? "true" : undefined;
-  const { data: apiData, mutate } = useAlerts(1, 100, resolved);
-  const [data, setData] = useState(mockAlerts);
+  const { data: apiData, error, isLoading, mutate } = useAlerts(1, 100, resolved);
+  const alerts = Array.isArray(apiData) ? apiData : [];
 
-  // Use API data if available
-  const alertsList = apiData ?? data;
-  const filtered = Array.isArray(alertsList)
-    ? alertsList.filter((a: Record<string, unknown>) => {
-        if (filter === "active") return !a.resolved;
-        if (filter === "resolved") return a.resolved;
-        return true;
-      })
-    : [];
+  const filtered = alerts.filter((a: Record<string, unknown>) => {
+    if (filter === "active") return !a.resolved;
+    if (filter === "resolved") return a.resolved;
+    return true;
+  });
 
-  function resolveAlert(id: string) {
-    // Try API first
-    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-    if (token) {
-      fetch(`/api/alerts/${id}/resolve`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
-      }).then(() => mutate());
-    }
-    // Also update local state for mock data fallback
-    setData((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, resolved: true } : a))
-    );
+  async function resolveAlert(id: string) {
+    await fetch(`/api/alerts/${id}/resolve`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+    mutate();
   }
 
-  const typeVariant = (type: Alert["type"]) => {
-    switch (type) {
-      case "duplicate": return "invalid" as const;
-      case "spike": return "suspicious" as const;
-      case "geo_anomaly": return "info" as const;
-      case "recall": return "invalid" as const;
-    }
+  const typeVariant = (type: string) => {
+    if (type === "duplicate_scan" || type === "recall" || type === "deactivated_use") return "invalid" as const;
+    if (type === "scan_spike") return "suspicious" as const;
+    return "info" as const;
   };
 
   return (
@@ -69,24 +54,24 @@ export default function AlertsPage() {
             )}
           >
             {f.charAt(0).toUpperCase() + f.slice(1)}
-            {f === "active" && (
-              <span className="ml-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-xs">
-                {data.filter((a) => !a.resolved).length}
-              </span>
-            )}
           </button>
         ))}
       </div>
 
+      {isLoading ? (
+        <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-700" /></div>
+      ) : error ? (
+        <div className="text-center py-12 text-red-600">Failed to load alerts</div>
+      ) : (
       <div className="space-y-3">
         {filtered.length === 0 ? (
           <div className="rounded-xl border border-border bg-white p-8 text-center">
             <p className="text-sm text-secondary">No alerts match your filter.</p>
           </div>
         ) : (
-          filtered.map((alert) => (
+          filtered.map((alert: Record<string, unknown>) => (
             <div
-              key={alert.id}
+              key={String(alert.id)}
               className={cn(
                 "rounded-xl border bg-white p-5 transition-colors",
                 alert.resolved ? "border-border" : "border-warning/30"
@@ -95,23 +80,24 @@ export default function AlertsPage() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-2">
-                    <Badge variant={typeVariant(alert.type)}>
-                      {alert.type.replace("_", " ")}
+                    <Badge variant={typeVariant(String(alert.type ?? ""))}>
+                      {String(alert.type ?? "").replace("_", " ")}
                     </Badge>
-                    {alert.resolved && (
-                      <Badge variant="authentic">resolved</Badge>
-                    )}
-                    <span className="text-xs text-secondary">{alert.triggeredAt}</span>
+                    {Boolean(alert.resolved) && <Badge variant="authentic">resolved</Badge>}
+                    <span className="text-xs text-secondary">
+                      {alert.createdAt ? new Date(alert.createdAt as string).toLocaleString() : ""}
+                    </span>
                   </div>
-                  <p className="text-sm text-foreground">{alert.message}</p>
-                  <p className="text-xs text-secondary">Token: <code className="rounded bg-background px-1 py-0.5 font-mono">{alert.token}</code></p>
+                  <p className="text-sm text-foreground">
+                    {String(alert.severity ?? "medium")} severity alert
+                    {alert.scanCount ? ` — ${alert.scanCount} scans` : ""}
+                  </p>
+                  {Boolean(alert.token) && (
+                    <p className="text-xs text-secondary">Token: <code className="rounded bg-background px-1 py-0.5 font-mono">{String(alert.token).slice(0, 30)}…</code></p>
+                  )}
                 </div>
                 {!alert.resolved && (
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => resolveAlert(alert.id)}
-                  >
+                  <Button size="sm" variant="secondary" onClick={() => resolveAlert(String(alert.id))}>
                     Resolve
                   </Button>
                 )}
@@ -120,6 +106,7 @@ export default function AlertsPage() {
           ))
         )}
       </div>
+      )}
     </div>
   );
 }

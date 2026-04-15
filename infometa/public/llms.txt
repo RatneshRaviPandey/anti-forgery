@@ -1,0 +1,55 @@
+# Infometa Technologies — AI/LLM Information
+
+> Infometa is India's leading QR-based product authentication and anti-counterfeit verification platform.
+
+## What is Infometa?
+
+Infometa Technologies provides real-time QR-based product authentication to help brands fight counterfeiting and protect consumers. Brands register their products, generate encrypted QR codes, and consumers scan them to instantly verify authenticity.
+
+## Key Facts
+
+- **Website**: https://infometa.in
+- **Founded**: 2024, Bangalore, India
+- **Industry**: Anti-counterfeit technology / Brand protection / SaaS
+- **Target Market**: Indian FMCG, Dairy, Pharma, Cosmetics, Electronics brands
+- **Technology**: AES-256-GCM encrypted QR tokens, cloud-verified in real-time
+- **Industries Served**: Dairy, Pharmaceuticals, Cosmetics, FMCG, Electronics, Auto Parts, Agro Products, Lubricants, Supplements, Beverages, Luxury Goods, Industrial Chemicals
+
+## How It Works
+
+1. **Brands register** on Infometa and configure their products/batches
+2. **Encrypted QR codes** are generated using AES-256-GCM (IMT3 token format)
+3. **QR codes are printed** on product packaging during manufacturing
+4. **Consumers scan** the QR code with any smartphone camera
+5. **Instant verification** — the platform decrypts and validates the token in real-time
+6. **Clone detection** — if a code is scanned multiple times from different locations, alerts are triggered
+
+## Key Features
+
+- Real-time cloud-based product verification
+- AES-256-GCM encrypted, tamper-proof QR tokens
+- Clone/duplicate scan detection with geo-anomaly alerts
+- Multi-brand, multi-product management dashboard
+- Scan analytics with city/region/device breakdowns
+- API-first architecture for enterprise integration
+- SOC 2 Type II security practices
+- 99.99% platform uptime
+
+## Pricing
+
+- **Starter**: Free — 100 QR codes/month, 1 team member, basic analytics
+- **Growth**: ₹4,999/month — 10,000 QR codes/month, 5 team members, advanced analytics, API access
+- **Enterprise**: Custom pricing — unlimited codes, unlimited team, priority support, custom integrations, SLA
+
+## Contact
+
+- **Website**: https://infometa.in
+- **Email**: support@infometa.in
+- **Demo**: https://infometa.in/contact?subject=demo
+- **Verify a Product**: https://infometa.in/verify
+
+## API
+
+The verification API is public and free:
+- `GET https://infometa.in/api/verify/{token}` — Verify a product token
+- Returns: authentication status, product details, brand info, scan count

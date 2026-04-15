@@ -1,0 +1,15 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Infometa Product Verifier",
+  "name_for_model": "infometa_verify",
+  "description_for_human": "Verify product authenticity by scanning QR codes. Check if a product is genuine or counterfeit.",
+  "description_for_model": "Infometa is an anti-counterfeit product verification platform. Use this to verify product authenticity tokens. Send a GET request to /api/verify/{token} to check if a product is authentic, suspicious, or invalid. The API returns product details including brand name, product name, SKU, batch code, manufacture date, expiry date, and scan count.",
+  "auth": { "type": "none" },
+  "api": {
+    "type": "openapi",
+    "url": "https://infometa.in/api/openapi.json"
+  },
+  "logo_url": "https://infometa.in/icon.svg",
+  "contact_email": "support@infometa.in",
+  "legal_info_url": "https://infometa.in/terms"
+}

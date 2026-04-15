@@ -7,7 +7,7 @@ function createResendClient() {
 
 export const resend = createResendClient();
 
-const FROM = process.env.EMAIL_FROM || 'alerts@infometa.tech';
+const FROM = process.env.EMAIL_FROM || 'alerts@infometa.in';
 
 export async function sendAlertEmail(to: string, subject: string, html: string) {
   if (!resend) return null;
@@ -26,7 +26,7 @@ export async function sendWelcomeEmail(to: string, brandName: string) {
         <p>Hi there,</p>
         <p>Thank you for registering <strong>${brandName}</strong> on the Infometa platform.</p>
         <p>You can now start protecting your products with QR-based authentication.</p>
-        <a href="https://infometa.tech/admin" style="display: inline-block; background: #0F766E; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; margin-top: 16px;">Go to Dashboard</a>
+        <a href="https://infometa.in/admin" style="display: inline-block; background: #0F766E; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; margin-top: 16px;">Go to Dashboard</a>
         <p style="margin-top: 24px; color: #475569; font-size: 14px;">— The Infometa Team</p>
       </div>
     `,

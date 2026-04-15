@@ -9,7 +9,8 @@ import { getClientIP } from '@/lib/utils/geo';
 
 // GET: List all active sessions for current user
 export async function GET(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '');
+  const token = req.cookies.get('infometa-session')?.value
+    ?? req.headers.get('authorization')?.replace('Bearer ', '');
   if (!token) return apiResponse.unauthorized('No token');
 
   const session = await validateSession(token);
@@ -30,7 +31,8 @@ export async function GET(req: NextRequest) {
 
 // DELETE: Revoke a specific session
 export async function DELETE(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '');
+  const token = req.cookies.get('infometa-session')?.value
+    ?? req.headers.get('authorization')?.replace('Bearer ', '');
   if (!token) return apiResponse.unauthorized('No token');
 
   const session = await validateSession(token);

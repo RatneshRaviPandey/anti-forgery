@@ -5,7 +5,7 @@ import { db } from '@/lib/db';
 import { brandUsers, passwordHistory } from '@/lib/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { apiResponse } from '@/lib/utils/response';
-import { validateSession } from '@/lib/auth/session';
+import { validateSession, revokeAllSessions } from '@/lib/auth/session';
 import { validatePasswordStrength } from '@/lib/auth/password-policy';
 import { writeAuditLog, SecurityEvents } from '@/lib/security/audit';
 import { getClientIP } from '@/lib/utils/geo';
@@ -16,7 +16,8 @@ const changePasswordSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '');
+  const token = req.cookies.get('infometa-session')?.value
+    ?? req.headers.get('authorization')?.replace('Bearer ', '');
   if (!token) return apiResponse.unauthorized('No token');
 
   const session = await validateSession(token);
@@ -76,5 +77,8 @@ export async function POST(req: NextRequest) {
     ipAddress: getClientIP(req),
   });
 
-  return apiResponse.success({ message: 'Password changed successfully' });
+  // Revoke all existing sessions — user must re-login with new password
+  await revokeAllSessions(user.id);
+
+  return apiResponse.success({ message: 'Password changed successfully. Please log in again.' });
 }

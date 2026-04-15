@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { db } from '@/lib/db';
 import { brandUsers, brands } from '@/lib/db/schema';
-import { eq, desc, count, ilike, and } from 'drizzle-orm';
+import { eq, desc, count, ilike, and, sql, inArray } from 'drizzle-orm';
 import { requireSuperAdmin } from '@/lib/auth/middleware';
 import { apiResponse } from '@/lib/utils/response';
 
@@ -45,17 +45,19 @@ export async function GET(req: NextRequest) {
     db.select({ count: count() }).from(brandUsers).where(where),
   ]);
 
-  // Enrich with brand name
-  const enriched = await Promise.all(data.map(async (user) => {
-    let brandName = null;
-    if (user.brandId) {
-      const brand = await db.query.brands.findFirst({
-        where: eq(brands.id, user.brandId),
-        columns: { name: true },
-      });
-      brandName = brand?.name ?? null;
-    }
-    return { ...user, brandName };
+  // Enrich with brand name via a single batch query (no N+1)
+  const brandIds = [...new Set(data.filter(u => u.brandId).map(u => u.brandId!))];
+  let brandMap: Record<string, string> = {};
+  if (brandIds.length > 0) {
+    const brandRows = await db.select({ id: brands.id, name: brands.name })
+      .from(brands)
+      .where(inArray(brands.id, brandIds));
+    brandMap = Object.fromEntries(brandRows.map(b => [b.id, b.name]));
+  }
+
+  const enriched = data.map(user => ({
+    ...user,
+    brandName: user.brandId ? (brandMap[user.brandId] ?? null) : null,
   }));
 
   return apiResponse.paginated(enriched, { page, limit, total: totalResult[0].count });

@@ -8,7 +8,7 @@ import { ScrollReveal } from "@/components/ui/scroll-reveal";
 export const metadata: Metadata = {
   title: "Case Studies — Real-World Anti-Counterfeit Success Stories",
   description: "See how leading brands across dairy, pharma, cosmetics, auto parts, and agriculture reduced counterfeiting by up to 90% with Infometa's QR verification platform.",
-  alternates: { canonical: "https://infometa.tech/case-studies" },
+  alternates: { canonical: "https://infometa.in/case-studies" },
 };
 
 export default function CaseStudiesPage() {

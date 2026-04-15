@@ -8,11 +8,11 @@ export const metadata: Metadata = {
   title: "Contact Us",
   description:
     "Get in touch with Infometa Technologies. Book a demo, discuss partnership opportunities, or get support for your anti-counterfeit product authentication needs.",
-  alternates: { canonical: "https://infometa.tech/contact" },
+  alternates: { canonical: "https://infometa.in/contact" },
   openGraph: {
     title: "Contact Infometa Technologies",
     description: "Book a demo, discuss partnerships, or get support.",
-    url: "https://infometa.tech/contact",
+    url: "https://infometa.in/contact",
   },
 };
 
@@ -22,8 +22,8 @@ const contactJsonLd = {
   mainEntity: {
     "@type": "LocalBusiness",
     name: "Infometa Technologies",
-    email: "support@infometa.tech",
-    url: "https://infometa.tech",
+    email: "support@infometa.in",
+    url: "https://infometa.in",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Bangalore",
@@ -66,7 +66,7 @@ export default function ContactPage() {
                 <div className="space-y-3 text-sm text-secondary">
                   <p>
                     <span className="block font-medium text-foreground">Email</span>
-                    support@infometa.tech
+                    support@infometa.in
                   </p>
                   <p>
                     <span className="block font-medium text-foreground">Phone</span>
@@ -101,9 +101,17 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* Map placeholder */}
-              <div className="rounded-xl border border-border bg-surface-tint h-48 flex items-center justify-center text-sm text-secondary">
-                Map placeholder — Bangalore, India
+              {/* Office location map */}
+              <div className="rounded-xl border border-border overflow-hidden h-48">
+                <iframe
+                  title="Infometa Office — Bangalore, India"
+                  src="https://www.openstreetmap.org/export/embed.html?bbox=77.55%2C12.93%2C77.65%2C13.00&layer=mapnik&marker=12.9716%2C77.5946"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                />
               </div>
             </div>
           </ScrollReveal>

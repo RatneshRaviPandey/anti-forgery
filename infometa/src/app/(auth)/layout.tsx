@@ -1,8 +1,10 @@
 import { Shield } from 'lucide-react';
 import Link from 'next/link';
+import { AuthPageGuard } from '@/components/auth/AuthPageGuard';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
+    <AuthPageGuard>
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-teal-50/30 flex">
       {/* Left panel — branding */}
       <div className="hidden lg:flex lg:w-[45%] bg-teal-800 text-white flex-col justify-between p-12 relative overflow-hidden">
@@ -37,5 +39,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </div>
       </div>
     </div>
+    </AuthPageGuard>
   );
 }

@@ -1,5 +1,7 @@
 import { drizzle as drizzleNeon } from 'drizzle-orm/neon-http';
 import { drizzle as drizzlePg } from 'drizzle-orm/node-postgres';
+import { drizzle as drizzlePglite } from 'drizzle-orm/pglite';
+import { PGlite } from '@electric-sql/pglite';
 import { neon } from '@neondatabase/serverless';
 import pg from 'pg';
 import * as schema from './schema';
@@ -7,13 +9,13 @@ import * as schema from './schema';
 const databaseUrl = process.env.DATABASE_URL || '';
 
 function createDb() {
-  if (!databaseUrl) {
-    // Placeholder for build time — no actual connection
-    const sql = neon('postgresql://placeholder:placeholder@localhost:5432/placeholder');
-    return drizzleNeon(sql, { schema });
+  if (!databaseUrl || databaseUrl === 'pglite') {
+    // Embedded PGlite for local development — no server needed
+    const client = new PGlite('./pgdata');
+    return drizzlePglite(client, { schema });
   }
 
-  // Use Neon HTTP driver for serverless/Neon URLs, otherwise use node-postgres
+  // Use Neon HTTP driver for serverless/Neon URLs
   if (databaseUrl.includes('neon.tech') || databaseUrl.includes('neon.')) {
     const sql = neon(databaseUrl);
     return drizzleNeon(sql, { schema });

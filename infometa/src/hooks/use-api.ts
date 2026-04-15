@@ -1,13 +1,7 @@
 import useSWR from 'swr';
 
-const API_BASE = process.env.NEXT_PUBLIC_APP_URL ?? '';
-
 async function fetcher(url: string) {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-
-  const res = await fetch(`${API_BASE}${url}`, { headers });
+  const res = await fetch(url, { credentials: 'include' });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   const json = await res.json();
   return json.data;

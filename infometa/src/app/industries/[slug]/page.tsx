@@ -20,11 +20,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${industry.name} Anti-Counterfeit Protection`,
     description: `Protect your ${industry.name.toLowerCase()} brand from counterfeit products with real-time QR verification. Trusted by brands worldwide. ${industry.longTailKeyword}.`,
-    alternates: { canonical: `https://infometa.tech/industries/${slug}` },
+    alternates: { canonical: `https://infometa.in/industries/${slug}` },
     openGraph: {
       title: `${industry.name} Anti-Counterfeit Protection | Infometa Technologies`,
       description: `Protect your ${industry.name.toLowerCase()} brand from counterfeit products with real-time QR verification.`,
-      url: `https://infometa.tech/industries/${slug}`,
+      url: `https://infometa.in/industries/${slug}`,
       images: [{ url: `/images/og/industries-${slug}.jpg`, width: 1200, height: 630 }],
     },
     twitter: {

@@ -17,6 +17,10 @@ interface Brand {
   _userCount: number;
   _productCount: number;
   _batchCount: number;
+  _scanCount: number;
+  _activeAlerts: number;
+  _authRate: number;
+  _healthScore: number;
 }
 
 const statusColors: Record<string, string> = {
@@ -46,7 +50,7 @@ export default function AdminBrandsPage() {
     if (statusFilter) params.set('status', statusFilter);
 
     fetch(`/api/superadmin/brands?${params}`, {
-      headers: { Authorization: `Bearer ${token}` },
+      credentials: 'include',
     })
       .then(r => r.json())
       .then(data => {
@@ -62,11 +66,9 @@ export default function AdminBrandsPage() {
   async function updateBrand(id: string, updates: Record<string, unknown>) {
     setActionLoading(id);
     try {
-      const res = await fetch(`/api/superadmin/brands/${id}`, {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates),
-      });
+      const res = await fetch(`/api/superadmin/brands/${id}`, { credentials: 'include', method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates), });
       if (res.ok) {
         setBrands(prev => prev.map(b => b.id === id ? { ...b, ...updates } as Brand : b));
       }
@@ -126,12 +128,13 @@ export default function AdminBrandsPage() {
               <thead>
                 <tr className="bg-gray-50 text-left text-gray-500 text-xs uppercase tracking-wide">
                   <th className="px-4 py-3">Brand</th>
+                  <th className="px-4 py-3">Health</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3">Plan</th>
-                  <th className="px-4 py-3">Users</th>
+                  <th className="px-4 py-3">Scans</th>
+                  <th className="px-4 py-3">Auth%</th>
                   <th className="px-4 py-3">Products</th>
-                  <th className="px-4 py-3">Batches</th>
-                  <th className="px-4 py-3">Created</th>
+                  <th className="px-4 py-3">Alerts</th>
                   <th className="px-4 py-3">Actions</th>
                 </tr>
               </thead>
@@ -143,16 +146,37 @@ export default function AdminBrandsPage() {
                       <p className="text-xs text-gray-500">{brand.email}</p>
                     </td>
                     <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold text-white ${
+                          brand._healthScore >= 80 ? 'bg-green-500' :
+                          brand._healthScore >= 60 ? 'bg-yellow-500' :
+                          brand._healthScore >= 40 ? 'bg-orange-500' : 'bg-red-500'
+                        }`}>
+                          {brand._healthScore}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
                       <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[brand.status] ?? 'bg-gray-100 text-gray-600'}`}>
                         {brand.status?.replace('_', ' ')}
                       </span>
                     </td>
                     <td className="px-4 py-3 capitalize">{brand.plan}</td>
-                    <td className="px-4 py-3">{brand._userCount}</td>
+                    <td className="px-4 py-3">{brand._scanCount.toLocaleString()}</td>
+                    <td className="px-4 py-3">
+                      <span className={brand._authRate >= 95 ? 'text-green-700 font-medium' : brand._authRate >= 80 ? 'text-yellow-700' : 'text-red-600 font-medium'}>
+                        {brand._authRate}%
+                      </span>
+                    </td>
                     <td className="px-4 py-3">{brand._productCount}</td>
-                    <td className="px-4 py-3">{brand._batchCount}</td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">
-                      {brand.createdAt ? new Date(brand.createdAt).toLocaleDateString() : '-'}
+                    <td className="px-4 py-3">
+                      {brand._activeAlerts > 0 ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-red-700 bg-red-100 px-2 py-0.5 rounded-full">
+                          {brand._activeAlerts} active
+                        </span>
+                      ) : (
+                        <span className="text-xs text-gray-400">None</span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1">
@@ -175,6 +199,14 @@ export default function AdminBrandsPage() {
                             <Ban size={16} />
                           </button>
                         )}
+                        <a
+                          href={`/api/superadmin/export?brandId=${brand.id}`}
+                          className="p-1.5 rounded hover:bg-blue-50 text-blue-600 transition"
+                          title="Export brand data (CSV)"
+                          target="_blank"
+                        >
+                          <Eye size={16} />
+                        </a>
                       </div>
                     </td>
                   </tr>

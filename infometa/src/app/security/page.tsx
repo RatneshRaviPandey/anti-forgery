@@ -5,7 +5,7 @@ import { ScrollReveal } from "@/components/ui/scroll-reveal";
 export const metadata: Metadata = {
   title: "Security",
   description: "Learn about Infometa's security architecture, encryption standards, access controls, and vulnerability disclosure program.",
-  alternates: { canonical: "https://infometa.tech/security" },
+  alternates: { canonical: "https://infometa.in/security" },
 };
 
 export default function SecurityPage() {
@@ -71,7 +71,7 @@ export default function SecurityPage() {
           </p>
           <div className="rounded-xl border border-border bg-surface-tint p-6 mb-8">
             <p className="font-medium text-foreground mb-1">Security Contact</p>
-            <p className="text-secondary">Email: security@infometa.tech</p>
+            <p className="text-secondary">Email: security@infometa.in</p>
             <p className="text-secondary mt-2 text-sm">
               We commit to acknowledging reports within 24 hours and providing a resolution timeline within 72 hours.
               We will not take legal action against researchers who follow responsible disclosure guidelines.

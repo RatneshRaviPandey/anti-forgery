@@ -20,7 +20,7 @@ export default function SecuritySettings() {
     setMfaLoading(true);
     try {
       const res = await fetch('/api/auth/mfa', {
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: 'include',
       });
       const data = await res.json();
       if (data.success) setMfaData(data.data);
@@ -32,9 +32,8 @@ export default function SecuritySettings() {
   async function confirmMFA(e: React.FormEvent) {
     e.preventDefault();
     if (!token) return;
-    const res = await fetch('/api/auth/mfa', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    const res = await fetch('/api/auth/mfa', { credentials: 'include', method: 'POST',
+      headers: { 'Content-Type': 'application/json', },
       body: JSON.stringify({ code: mfaCode }),
     });
     const data = await res.json();
@@ -51,11 +50,9 @@ export default function SecuritySettings() {
     setPwLoading(true);
     setPwMessage('');
     try {
-      const res = await fetch('/api/auth/change-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(pwForm),
-      });
+      const res = await fetch('/api/auth/change-password', { credentials: 'include', method: 'POST',
+        headers: { 'Content-Type': 'application/json', },
+        body: JSON.stringify(pwForm), });
       const data = await res.json();
       setPwMessage(data.success ? 'Password changed!' : data.error);
       if (data.success) setPwForm({ currentPassword: '', newPassword: '' });

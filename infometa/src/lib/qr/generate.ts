@@ -1,7 +1,7 @@
 import QRCode from 'qrcode';
 import { generateToken, signToken } from '@/lib/utils/crypto';
 
-const BASE_URL = process.env.QR_VERIFY_BASE_URL || 'https://infometa.tech/verify';
+const BASE_URL = process.env.QR_VERIFY_BASE_URL || 'https://infometa.in/verify';
 
 export interface GeneratedQR {
   token: string;

@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: cs.title,
     description: `${cs.challenge.slice(0, 155)}...`,
-    alternates: { canonical: `https://infometa.tech/case-studies/${slug}` },
+    alternates: { canonical: `https://infometa.in/case-studies/${slug}` },
   };
 }
 

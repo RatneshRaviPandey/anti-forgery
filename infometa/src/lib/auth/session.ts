@@ -6,7 +6,7 @@ import { addDays, addHours } from 'date-fns';
 import { eq, and } from 'drizzle-orm';
 
 const SESSION_DURATION_HOURS = 8;
-const SESSION_DURATION_DAYS  = 30;
+const SESSION_DURATION_DAYS  = 7;   // Max 7 days for "remember me" (compliance)
 const MAX_SESSIONS_PER_USER  = 5;
 
 export function hashToken(raw: string): string {

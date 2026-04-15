@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { db } from '@/lib/db';
 import { scans } from '@/lib/db/schema';
-import { eq, and, desc, count, gte, lte } from 'drizzle-orm';
+import { eq, and, desc, count, gte, lte, sql } from 'drizzle-orm';
 import { requireAuth, getBrandIdFromSession } from '@/lib/auth/middleware';
 import { apiResponse } from '@/lib/utils/response';
 
@@ -27,7 +27,19 @@ export async function GET(req: NextRequest) {
   const where = and(...conditions);
 
   const [data, totalResult] = await Promise.all([
-    db.select().from(scans).where(where).orderBy(desc(scans.scannedAt)).limit(limit).offset((page - 1) * limit),
+    db.select({
+      id: scans.id,
+      token: scans.token,
+      brandId: scans.brandId,
+      resultStatus: scans.resultStatus,
+      scannedAt: scans.scannedAt,
+      city: scans.city,
+      country: scans.country,
+      deviceHash: scans.deviceHash,
+      userAgent: scans.userAgent,
+      // Subquery: count how many times this token has been scanned
+      tokenScanCount: sql<number>`(SELECT count(*)::int FROM scans s2 WHERE s2.token = ${scans.token})`,
+    }).from(scans).where(where).orderBy(desc(scans.scannedAt)).limit(limit).offset((page - 1) * limit),
     db.select({ count: count() }).from(scans).where(where),
   ]);
 

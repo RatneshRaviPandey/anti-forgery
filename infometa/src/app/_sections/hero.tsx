@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { HeroLiveBadge, HeroStatsRow } from "./hero-stats";
 
 /* ── Animated QR code SVG (original, no copyright) ── */
 function AnimatedQR() {
@@ -160,13 +161,7 @@ export function HeroSection() {
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Left: Text content */}
           <div className="animate-[heroFadeIn_1s_ease_both]">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium text-white/90 backdrop-blur-sm">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
-              </span>
-              Live — 2.8M+ verifications this month
-            </div>
+            <HeroLiveBadge />
 
             <h1 className="text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl lg:leading-[1.1]">
               Scan. Verify.{" "}
@@ -192,20 +187,7 @@ export function HeroSection() {
               </Button>
             </div>
 
-            <div className="mt-12 flex flex-wrap items-center gap-6 text-sm text-white/70">
-              <span className="flex items-center gap-2">
-                <span className="inline-block h-2 w-2 rounded-full bg-success" aria-hidden="true" />
-                50M+ verifications
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="inline-block h-2 w-2 rounded-full bg-success" aria-hidden="true" />
-                200+ brands
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="inline-block h-2 w-2 rounded-full bg-success" aria-hidden="true" />
-                99.99% uptime
-              </span>
-            </div>
+            <HeroStatsRow />
           </div>
 
           {/* Right: Animated verification demo */}

@@ -4,7 +4,7 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 export const metadata: Metadata = {
   title: "Cookie Policy",
   description: "Infometa Technologies Cookie Policy. Learn about the cookies we use, their purposes, and how to manage your preferences.",
-  alternates: { canonical: "https://infometa.tech/cookies" },
+  alternates: { canonical: "https://infometa.in/cookies" },
   robots: { index: false, follow: true },
 };
 
@@ -75,7 +75,7 @@ export default function CookiesPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">Contact</h2>
-          <p>For questions about our use of cookies, contact us at privacy@infometa.tech.</p>
+          <p>For questions about our use of cookies, contact us at privacy@infometa.in.</p>
         </section>
       </div>
     </div>

@@ -22,9 +22,9 @@ export const typography = {
 export const siteConfig = {
   name: "Infometa Technologies",
   tagline: "Scan. Verify. Trust.",
-  url: "https://infometa.tech",
+  url: "https://infometa.in",
   description:
     "Real-time QR-based product authentication and anti-counterfeit verification platform. Protect your brand and your customers.",
-  email: "support@infometa.tech",
+  email: "support@infometa.in",
   ogImage: "/images/og/og-home.jpg",
 } as const;

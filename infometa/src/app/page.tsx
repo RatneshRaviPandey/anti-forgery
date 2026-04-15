@@ -15,17 +15,17 @@ export const metadata: Metadata = {
   title: "Infometa Technologies — Scan. Verify. Trust. | Anti-Counterfeit QR Verification",
   description:
     "Protect your brand and your customers with real-time QR-based product authentication — built for the scale of modern supply chains. 50M+ verifications processed.",
-  alternates: { canonical: "https://infometa.tech" },
+  alternates: { canonical: "https://infometa.in" },
 };
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "Infometa Technologies",
-  url: "https://infometa.tech",
+  url: "https://infometa.in",
   potentialAction: {
     "@type": "SearchAction",
-    target: "https://infometa.tech/verify?code={search_term_string}",
+    target: "https://infometa.in/verify?code={search_term_string}",
     "query-input": "required name=search_term_string",
   },
 };

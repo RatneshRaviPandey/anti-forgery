@@ -48,7 +48,10 @@ export default function BillingSettings() {
                 ))}
               </ul>
               {!isCurrent && (
-                <button className="mt-4 w-full border border-teal-600 text-teal-700 py-2 rounded-lg text-sm font-medium hover:bg-teal-50 transition">
+                <button
+                  onClick={() => window.open(`/contact?subject=${encodeURIComponent('Plan Upgrade: ' + plan.name)}`, '_self')}
+                  className="mt-4 w-full border border-teal-600 text-teal-700 py-2 rounded-lg text-sm font-medium hover:bg-teal-50 transition"
+                >
                   Upgrade
                 </button>
               )}

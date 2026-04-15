@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { StatusUptime } from "./status-uptime";
 
 export const metadata: Metadata = {
   title: "System Status",
   description: "Infometa Technologies platform status and uptime. Check current system health and subscribe to status updates.",
-  alternates: { canonical: "https://infometa.tech/status" },
+  alternates: { canonical: "https://infometa.in/status" },
   robots: { index: false, follow: true },
 };
 
@@ -46,10 +47,7 @@ export default function StatusPage() {
       </div>
 
       {/* Uptime */}
-      <div className="mb-8 text-center">
-        <p className="text-3xl font-bold text-foreground">99.99%</p>
-        <p className="text-secondary">Uptime over the last 90 days</p>
-      </div>
+      <StatusUptime />
 
       {/* Subscribe */}
       <div className="mb-8 rounded-xl border border-border bg-white p-6 text-center">

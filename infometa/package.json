@@ -17,6 +17,7 @@
     "worker:start": "concurrently \"tsx src/lib/queue/workers/scan-logger.ts\" \"tsx src/lib/queue/workers/alert-engine.ts\" \"tsx src/lib/queue/workers/qr-generator.ts\" \"tsx src/lib/queue/workers/email-notifier.ts\""
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.4.4",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
     "@neondatabase/serverless": "^1.0.2",
@@ -49,7 +50,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "drizzle-kit": "^0.31.10",
-    "drizzle-orm": "^0.45.1",
+    "drizzle-orm": "^0.45.2",
     "framer-motion": "^12.38.0",
     "html5-qrcode": "^2.3.8",
     "ioredis": "^5.10.1",
@@ -63,6 +64,7 @@
     "qrcode": "^1.5.4",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-hot-toast": "^2.6.0",
     "recharts": "^3.8.1",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-slug": "^6.0.0",

@@ -1,0 +1,47 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /portal
+Disallow: /portal/*
+Disallow: /api/
+Disallow: /login
+Disallow: /register
+
+# Sitemaps
+Sitemap: https://infometa.in/sitemap.xml
+Sitemap: https://infometa.in/sitemap-0.xml
+
+# AI Crawlers — Welcome
+User-agent: GPTBot
+Allow: /
+Disallow: /admin
+Disallow: /portal
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# LLM discovery
+User-agent: *
+# See /llms.txt for AI-readable summary
+# See /llms-full.txt for complete documentation
+# See /.well-known/ai-plugin.json for plugin specification

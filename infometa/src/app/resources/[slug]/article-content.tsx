@@ -12,7 +12,7 @@ export const articleContent: Record<string, ReactNode> = {
 
       <h3 className="text-xl font-medium text-foreground mt-6 mb-3">Step 1: Cryptographic Code Generation</h3>
       <p>When a brand registers a product batch, the authentication platform generates a unique cryptographic token for every single unit. These tokens are based on UUID v4 (Universally Unique Identifiers) combined with HMAC-SHA256 digital signatures. This combination ensures that each code is mathematically unique, non-sequential, impossible to guess or predict, cryptographically signed for tamper detection, and verified server-side rather than locally.</p>
-      <p className="mt-4">A typical QR code contains a URL like <code className="text-sm bg-background px-1.5 py-0.5 rounded">https://verify.infometa.tech/v/a8f3e2b1-4c5d-6789-abc0-123456789012</code>. The encoded token is meaningless without the server-side registry, rendering offline attacks futile.</p>
+      <p className="mt-4">A typical QR code contains a URL like <code className="text-sm bg-background px-1.5 py-0.5 rounded">https://verify.infometa.in/v/a8f3e2b1-4c5d-6789-abc0-123456789012</code>. The encoded token is meaningless without the server-side registry, rendering offline attacks futile.</p>
 
       <h3 className="text-xl font-medium text-foreground mt-6 mb-3">Step 2: Code Application During Manufacturing</h3>
       <p>QR codes are typically applied during the existing packaging process using label printing, direct printing on packaging material, laser etching on premium products, or tamper-evident seals with embedded QR codes. The key advantage is that most implementations require no changes to existing production lines — simply adding a print stage or using smart labels.</p>

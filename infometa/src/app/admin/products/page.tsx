@@ -1,60 +1,44 @@
 "use client";
 
 import { useState } from "react";
-import { products as mockProducts, type Product } from "@/lib/mock-data";
 import { useProducts } from "@/hooks/use-api";
 import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 
 export default function ProductsPage() {
   const [search, setSearch] = useState("");
-  const { data: apiData, error } = useProducts(1, 100, search || undefined);
+  const { data: apiData, error, isLoading } = useProducts(1, 100, search || undefined);
 
-  // Use API data if available, fall back to mock data
-  const products = apiData ?? mockProducts;
-
-  const filtered = Array.isArray(products)
-    ? products.filter(
-        (p: Record<string, string>) =>
-          (p.name ?? "").toLowerCase().includes(search.toLowerCase()) ||
-          (p.brand ?? "").toLowerCase().includes(search.toLowerCase()) ||
-          (p.sku ?? "").toLowerCase().includes(search.toLowerCase())
-      )
-    : [];
+  const products = Array.isArray(apiData) ? apiData : [];
 
   const columns = [
     { key: "name", header: "Product Name", sortable: true },
-    { key: "brand", header: "Brand", sortable: true },
-    { key: "category", header: "Category", sortable: true },
     { key: "sku", header: "SKU" },
     { key: "industry", header: "Industry", sortable: true },
+    { key: "category", header: "Category", sortable: true },
     {
-      key: "status",
+      key: "isActive",
       header: "Status",
-      render: (item: Product) => (
-        <Badge
-          variant={
-            item.status === "active" ? "authentic" : item.status === "recalled" ? "invalid" : "suspicious"
-          }
-        >
-          {item.status}
+      render: (item: Record<string, unknown>) => (
+        <Badge variant={item.isActive ? "authentic" : "invalid"}>
+          {item.isActive ? "Active" : "Inactive"}
         </Badge>
       ),
+    },
+    {
+      key: "createdAt",
+      header: "Created",
+      render: (item: Record<string, unknown>) =>
+        item.createdAt ? new Date(item.createdAt as string).toLocaleDateString() : "—",
     },
   ];
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-foreground">Products</h1>
-          <p className="text-sm text-secondary">Manage your product catalog and authentication settings.</p>
-        </div>
-        <Button size="sm">
-          <Plus className="h-4 w-4" /> Add Product
-        </Button>
+      <div>
+        <h1 className="text-2xl font-semibold text-foreground">Products</h1>
+        <p className="text-sm text-secondary">All products across all brands.</p>
       </div>
 
       <div className="relative max-w-sm">
@@ -68,7 +52,13 @@ export default function ProductsPage() {
         />
       </div>
 
-      <DataTable data={filtered as unknown as Record<string, unknown>[]} columns={columns as never} pageSize={10} />
+      {isLoading ? (
+        <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-700" /></div>
+      ) : error ? (
+        <div className="text-center py-12 text-red-600">Failed to load products</div>
+      ) : (
+        <DataTable data={products as unknown as Record<string, unknown>[]} columns={columns as never} pageSize={10} />
+      )}
     </div>
   );
 }

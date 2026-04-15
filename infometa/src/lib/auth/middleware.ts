@@ -5,19 +5,29 @@ import { eq } from 'drizzle-orm';
 import { apiResponse } from '@/lib/utils/response';
 import { validateSession } from '@/lib/auth/session';
 
-// Skip auth when no auth infra is configured (local dev with seed data)
+// Auth bypass is ONLY allowed in non-production environments
 const isAuthConfigured = Boolean(process.env.ENABLE_AUTH);
+if (!isAuthConfigured && process.env.NODE_ENV === 'production') {
+  throw new Error('ENABLE_AUTH must be set to true in production. Refusing to start with authentication disabled.');
+}
 
 export async function requireAuth(req: NextRequest) {
   if (!isAuthConfigured) return null;
 
-  const token = req.headers.get('authorization')?.replace('Bearer ', '');
+  const token = extractToken(req);
   if (!token) return apiResponse.unauthorized('Authentication required');
 
   const session = await validateSession(token);
   if (!session.valid) return apiResponse.unauthorized('Invalid or expired session');
 
   return null;
+}
+
+/** Extract auth token from httpOnly cookie (preferred) or Authorization header (fallback) */
+function extractToken(req: NextRequest): string | null {
+  return req.cookies.get('infometa-session')?.value
+    ?? req.headers.get('authorization')?.replace('Bearer ', '')
+    ?? null;
 }
 
 export async function getBrandIdFromSession(req: NextRequest): Promise<string> {
@@ -27,7 +37,7 @@ export async function getBrandIdFromSession(req: NextRequest): Promise<string> {
     return firstBrand.id;
   }
 
-  const token = req.headers.get('authorization')?.replace('Bearer ', '');
+  const token = extractToken(req);
   if (!token) throw new Error('No auth token');
 
   const session = await validateSession(token);
@@ -40,7 +50,7 @@ export async function getBrandIdFromSession(req: NextRequest): Promise<string> {
 export async function requirePortalAuth(req: NextRequest): Promise<{
   userId: string; brandId: string; role: string;
 } | null> {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '');
+  const token = extractToken(req);
   if (!token) return null;
 
   const session = await validateSession(token);
@@ -55,7 +65,7 @@ export async function requirePortalAuth(req: NextRequest): Promise<{
 
 // Super admin check
 export async function requireSuperAdmin(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '');
+  const token = extractToken(req);
   if (!token) return { error: apiResponse.unauthorized('Authentication required'), session: null };
 
   const session = await validateSession(token);

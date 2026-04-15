@@ -9,11 +9,11 @@ export const metadata: Metadata = {
   title: "Industries We Protect from Counterfeiting",
   description:
     "Counterfeiting costs global brands $4.5 trillion annually. Infometa protects 12 major industries with real-time QR-based product authentication.",
-  alternates: { canonical: "https://infometa.tech/industries" },
+  alternates: { canonical: "https://infometa.in/industries" },
   openGraph: {
     title: "Industries We Protect | Infometa Technologies",
     description: "From dairy to luxury goods — real-time anti-counterfeit protection across 12 industries.",
-    url: "https://infometa.tech/industries",
+    url: "https://infometa.in/industries",
   },
 };
 

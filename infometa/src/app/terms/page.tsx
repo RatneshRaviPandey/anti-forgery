@@ -4,7 +4,7 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description: "Infometa Technologies Terms of Service governing the use of our product authentication and anti-counterfeit verification platform.",
-  alternates: { canonical: "https://infometa.tech/terms" },
+  alternates: { canonical: "https://infometa.in/terms" },
 };
 
 export default function TermsPage() {
@@ -68,7 +68,7 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-foreground">11. Contact</h2>
-          <p>For questions about these terms, contact us at legal@infometa.tech.</p>
+          <p>For questions about these terms, contact us at legal@infometa.in.</p>
         </section>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { usePortalAuth } from '../../layout';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 export default function NewBatch() {
   const { token } = usePortalAuth();
@@ -22,16 +23,15 @@ export default function NewBatch() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/batches', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      const res = await fetch('/api/batches', { credentials: 'include', method: 'POST',
+        headers: { 'Content-Type': 'application/json', },
         body: JSON.stringify({
           ...form,
-          totalUnits: parseInt(form.totalUnits, 10),
-        }),
+          totalUnits: parseInt(form.totalUnits, 10), }),
       });
       const data = await res.json();
       if (!data.success) { setError(data.error || 'Failed'); setLoading(false); return; }
+      toast.success('Batch created successfully!');
       router.push('/portal/batches');
     } catch {
       setError('Network error');

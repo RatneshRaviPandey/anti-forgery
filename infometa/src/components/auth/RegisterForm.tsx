@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Loader2, Check, X } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const INDUSTRIES = [
   { value: 'dairy', label: 'Dairy' },
@@ -67,6 +68,7 @@ export default function RegisterForm() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const [form, setForm] = useState({
     brandName: '', industry: '', website: '', phone: '', country: 'IN',
@@ -75,8 +77,48 @@ export default function RegisterForm() {
   });
   const [showPassword, setShowPassword] = useState(false);
 
+  const FREE_EMAIL_DOMAINS = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com', 'mail.com', 'protonmail.com', 'icloud.com', 'yandex.com', 'zoho.com'];
+
   function update(field: string, value: string | boolean) {
     setForm(f => ({ ...f, [field]: value }));
+    // Clear field error on change
+    if (fieldErrors[field]) setFieldErrors(e => { const n = { ...e }; delete n[field]; return n; });
+  }
+
+  function validateField(field: string, value: string): string | null {
+    switch (field) {
+      case 'phone':
+        if (!value) return null; // optional
+        if (!/^\+?[0-9]{10,15}$/.test(value.replace(/[\s\-()]/g, '')))
+          return 'Enter a valid phone number (10-15 digits, e.g., +91 98765 43210)';
+        return null;
+      case 'email':
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Enter a valid email address';
+        const domain = value.split('@')[1]?.toLowerCase();
+        if (FREE_EMAIL_DOMAINS.includes(domain))
+          return 'Please use your business email (not ' + domain + ')';
+        return null;
+      case 'brandName':
+        if (value.length < 2) return 'Brand name must be at least 2 characters';
+        if (value.length > 100) return 'Brand name must be under 100 characters';
+        if (/[<>{}[\]\\]/.test(value)) return 'Brand name contains invalid characters';
+        return null;
+      case 'website':
+        if (!value) return null;
+        if (!/^https?:\/\/.+\..+/.test(value)) return 'Enter a valid URL starting with http:// or https://';
+        return null;
+      case 'ownerName':
+        if (value.length < 2) return 'Name must be at least 2 characters';
+        return null;
+      default: return null;
+    }
+  }
+
+  function handleBlur(field: string) {
+    const value = form[field as keyof typeof form] as string;
+    const err = validateField(field, value);
+    if (err) setFieldErrors(e => ({ ...e, [field]: err }));
+    else setFieldErrors(e => { const n = { ...e }; delete n[field]; return n; });
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -100,6 +142,7 @@ export default function RegisterForm() {
         return;
       }
 
+      toast.success('Account created! You can now sign in.');
       router.push('/login?registered=true');
     } catch {
       setError('Network error. Please try again.');
@@ -121,10 +164,13 @@ export default function RegisterForm() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Brand / Company Name</label>
             <input
-              required value={form.brandName} onChange={e => update('brandName', e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+              required value={form.brandName}
+              onChange={e => update('brandName', e.target.value)}
+              onBlur={() => handleBlur('brandName')}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none ${fieldErrors.brandName ? 'border-red-400' : 'border-gray-300'}`}
               placeholder="Acme Corp"
             />
+            {fieldErrors.brandName && <p className="text-xs text-red-600 mt-1">{fieldErrors.brandName}</p>}
           </div>
 
           <div>
@@ -152,10 +198,13 @@ export default function RegisterForm() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Phone (optional)</label>
               <input
-                type="tel" value={form.phone} onChange={e => update('phone', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
-                placeholder="+91..."
+                type="tel" value={form.phone}
+                onChange={e => update('phone', e.target.value)}
+                onBlur={() => handleBlur('phone')}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none ${fieldErrors.phone ? 'border-red-400' : 'border-gray-300'}`}
+                placeholder="+91 98765 43210"
               />
+              {fieldErrors.phone && <p className="text-xs text-red-600 mt-1">{fieldErrors.phone}</p>}
             </div>
           </div>
 
@@ -178,12 +227,15 @@ export default function RegisterForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Business Email Address</label>
             <input
-              type="email" required value={form.email} onChange={e => update('email', e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+              type="email" required value={form.email}
+              onChange={e => update('email', e.target.value)}
+              onBlur={() => handleBlur('email')}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none ${fieldErrors.email ? 'border-red-400' : 'border-gray-300'}`}
               placeholder="you@company.com"
             />
+            {fieldErrors.email && <p className="text-xs text-red-600 mt-1">{fieldErrors.email}</p>}
           </div>
 
           <div>
@@ -212,7 +264,7 @@ export default function RegisterForm() {
                 onChange={e => update('acceptedTerms', e.target.checked)}
                 className="rounded border-gray-300 text-teal-600 focus:ring-teal-500 mt-0.5"
               />
-              I agree to the Terms of Service
+              I agree to the <a href="/terms" target="_blank" className="text-teal-600 underline hover:text-teal-700">Terms of Service</a>
             </label>
             <label className="flex items-start gap-2 text-sm text-gray-600 cursor-pointer">
               <input
@@ -220,7 +272,7 @@ export default function RegisterForm() {
                 onChange={e => update('acceptedPrivacy', e.target.checked)}
                 className="rounded border-gray-300 text-teal-600 focus:ring-teal-500 mt-0.5"
               />
-              I agree to the Privacy Policy
+              I agree to the <a href="/privacy" target="_blank" className="text-teal-600 underline hover:text-teal-700">Privacy Policy</a>
             </label>
           </div>
 

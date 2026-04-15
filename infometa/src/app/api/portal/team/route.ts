@@ -11,7 +11,8 @@ import { getClientIP } from '@/lib/utils/geo';
 
 // GET: List team members for current brand
 export async function GET(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '');
+  const token = req.cookies.get('infometa-session')?.value
+    ?? req.headers.get('authorization')?.replace('Bearer ', '');
   if (!token) return apiResponse.unauthorized('No token');
 
   const session = await validateSession(token);
@@ -37,7 +38,8 @@ const inviteSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '');
+  const token = req.cookies.get('infometa-session')?.value
+    ?? req.headers.get('authorization')?.replace('Bearer ', '');
   if (!token) return apiResponse.unauthorized('No token');
 
   const session = await validateSession(token);

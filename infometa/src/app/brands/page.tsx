@@ -10,11 +10,11 @@ export const metadata: Metadata = {
   title: "For Brands — Protect Your Products",
   description:
     "Give every product its own identity. Detect clones, track distribution, and build consumer trust with real-time QR-based product authentication from Infometa.",
-  alternates: { canonical: "https://infometa.tech/brands" },
+  alternates: { canonical: "https://infometa.in/brands" },
   openGraph: {
     title: "For Brands — Anti-Counterfeit Product Authentication | Infometa",
     description: "Give every product its own identity. Real-time QR verification, clone detection, and scan analytics.",
-    url: "https://infometa.tech/brands",
+    url: "https://infometa.in/brands",
   },
 };
 

@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { db } from '@/lib/db';
-import { brands, brandUsers, products, batches, qrCodes, scans, alerts } from '@/lib/db/schema';
+import { brands, brandUsers, products, batches, qrCodes, scans, alerts, inquiries } from '@/lib/db/schema';
 import { count, eq } from 'drizzle-orm';
 import { requireSuperAdmin } from '@/lib/auth/middleware';
 import { apiResponse } from '@/lib/utils/response';
@@ -18,6 +18,8 @@ export async function GET(req: NextRequest) {
     scansCount,
     alertsCount,
     activeAlerts,
+    inquiriesCount,
+    newInquiries,
   ] = await Promise.all([
     db.select({ count: count() }).from(brands),
     db.select({ count: count() }).from(brandUsers),
@@ -27,6 +29,8 @@ export async function GET(req: NextRequest) {
     db.select({ count: count() }).from(scans),
     db.select({ count: count() }).from(alerts),
     db.select({ count: count() }).from(alerts).where(eq(alerts.resolved, false)),
+    db.select({ count: count() }).from(inquiries),
+    db.select({ count: count() }).from(inquiries).where(eq(inquiries.status, 'new')),
   ]);
 
   return apiResponse.success({
@@ -38,5 +42,7 @@ export async function GET(req: NextRequest) {
     scans:        scansCount[0].count,
     alerts:       alertsCount[0].count,
     activeAlerts: activeAlerts[0].count,
+    inquiries:    inquiriesCount[0].count,
+    newInquiries: newInquiries[0].count,
   });
 }

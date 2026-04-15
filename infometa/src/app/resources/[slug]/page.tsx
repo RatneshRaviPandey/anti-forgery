@@ -20,11 +20,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: article.title,
     description: article.description,
-    alternates: { canonical: `https://infometa.tech/resources/${slug}` },
+    alternates: { canonical: `https://infometa.in/resources/${slug}` },
     openGraph: {
       title: `${article.title} | Infometa Technologies`,
       description: article.description,
-      url: `https://infometa.tech/resources/${slug}`,
+      url: `https://infometa.in/resources/${slug}`,
       type: "article",
       publishedTime: article.publishDate,
       modifiedTime: article.lastModified,
@@ -60,11 +60,11 @@ export default async function BlogArticlePage({ params }: Props) {
     publisher: {
       "@type": "Organization",
       name: "Infometa Technologies",
-      logo: { "@type": "ImageObject", url: "https://infometa.tech/images/logo.png" },
+      logo: { "@type": "ImageObject", url: "https://infometa.in/images/logo.png" },
     },
-    url: `https://infometa.tech/resources/${slug}`,
-    image: `https://infometa.tech${article.ogImage}`,
-    mainEntityOfPage: `https://infometa.tech/resources/${slug}`,
+    url: `https://infometa.in/resources/${slug}`,
+    image: `https://infometa.in${article.ogImage}`,
+    mainEntityOfPage: `https://infometa.in/resources/${slug}`,
   };
 
   return (
@@ -115,10 +115,10 @@ export default async function BlogArticlePage({ params }: Props) {
           {/* Share */}
           <div className="mt-8 flex items-center gap-3 border-t border-border pt-6">
             <span className="text-sm font-medium text-foreground">Share:</span>
-            <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(`https://infometa.tech/resources/${slug}`)}`} target="_blank" rel="noopener noreferrer" className="text-secondary hover:text-primary">
+            <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(`https://infometa.in/resources/${slug}`)}`} target="_blank" rel="noopener noreferrer" className="text-secondary hover:text-primary">
               Twitter
             </a>
-            <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://infometa.tech/resources/${slug}`)}`} target="_blank" rel="noopener noreferrer" className="text-secondary hover:text-primary">
+            <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://infometa.in/resources/${slug}`)}`} target="_blank" rel="noopener noreferrer" className="text-secondary hover:text-primary">
               LinkedIn
             </a>
           </div>

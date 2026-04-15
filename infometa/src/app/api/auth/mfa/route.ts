@@ -11,7 +11,8 @@ import { z } from 'zod';
 
 // GET: Generate MFA secret + QR URL for setup
 export async function GET(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '');
+  const token = req.cookies.get('infometa-session')?.value
+    ?? req.headers.get('authorization')?.replace('Bearer ', '');
   if (!token) return apiResponse.unauthorized('No token');
 
   const session = await validateSession(token);
@@ -46,7 +47,8 @@ export async function GET(req: NextRequest) {
 const confirmSchema = z.object({ code: z.string().length(6) });
 
 export async function POST(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '');
+  const token = req.cookies.get('infometa-session')?.value
+    ?? req.headers.get('authorization')?.replace('Bearer ', '');
   if (!token) return apiResponse.unauthorized('No token');
 
   const session = await validateSession(token);
@@ -80,7 +82,8 @@ export async function POST(req: NextRequest) {
 
 // DELETE: Disable MFA
 export async function DELETE(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '');
+  const token = req.cookies.get('infometa-session')?.value
+    ?? req.headers.get('authorization')?.replace('Bearer ', '');
   if (!token) return apiResponse.unauthorized('No token');
 
   const session = await validateSession(token);

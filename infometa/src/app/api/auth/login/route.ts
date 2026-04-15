@@ -143,22 +143,39 @@ export async function POST(req: NextRequest) {
     after:  { city: geo?.city, country: geo?.country },
   });
 
-  return apiResponse.success({
-    accessToken:  session.token,
-    refreshToken: session.refreshToken,
-    expiresAt:    session.expiresAt.toISOString(),
-    sessionId:    session.id,
-    user: {
-      id:                 user.id,
-      name:               user.name,
-      email:              user.email,
-      role:               user.role,
-      brandId:            user.brandId,
-      mfaEnabled:         user.mfaEnabled,
-      mustChangePassword: user.mustChangePassword,
-      isSuperAdmin:       user.isSuperAdmin ?? false,
+  // Build response with httpOnly secure cookie
+  // Remember me: 7 days max (not 30), regular: 8 hours
+  const maxAge = remember ? 7 * 86400 : 8 * 3600;
+  const isSecure = process.env.NODE_ENV === 'production';
+
+  const response = NextResponse.json({
+    success: true,
+    data: {
+      expiresAt: session.expiresAt.toISOString(),
+      sessionId: session.id,
+      user: {
+        id:                 user.id,
+        name:               user.name,
+        email:              user.email,
+        role:               user.role,
+        brandId:            user.brandId,
+        mfaEnabled:         user.mfaEnabled,
+        mustChangePassword: user.mustChangePassword,
+        isSuperAdmin:       user.isSuperAdmin ?? false,
+      },
     },
   });
+
+  // Set httpOnly secure cookie — not accessible via JavaScript
+  response.cookies.set('infometa-session', session.token, {
+    httpOnly: true,
+    secure:   isSecure,
+    sameSite: 'strict',
+    path:     '/',
+    maxAge,
+  });
+
+  return response;
 }
 
 async function recordFailedAttempt(

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -44,10 +45,20 @@ export default function LoginForm() {
         return;
       }
 
-      // Store token + user info
-      localStorage.setItem('infometa-token', data.data.accessToken);
-      localStorage.setItem('infometa-user', JSON.stringify(data.data.user));
-      document.cookie = `infometa-session=${data.data.accessToken}; path=/; max-age=${remember ? 2592000 : 28800}; SameSite=Lax`;
+      // Token is set as httpOnly cookie by the server response.
+      // Store only non-sensitive user display info in localStorage (syncs across tabs).
+      const userData = {
+        name: data.data.user.name,
+        email: data.data.user.email,
+        role: data.data.user.role,
+        isSuperAdmin: data.data.user.isSuperAdmin,
+        brandId: data.data.user.brandId,
+      };
+      localStorage.setItem('infometa-user', JSON.stringify(userData));
+      // Notify same-tab listeners (storage event only fires in other tabs)
+      window.dispatchEvent(new CustomEvent('infometa-auth-change', { detail: userData }));
+
+      toast.success(`Welcome back, ${data.data.user.name}!`);
 
       const redirect = new URLSearchParams(window.location.search).get('redirect');
       if (redirect) {

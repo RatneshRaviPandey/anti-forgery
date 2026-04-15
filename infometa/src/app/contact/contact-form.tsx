@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
 
 const industries = [
   "Dairy", "Pharmaceuticals", "Cosmetics", "FMCG", "Electronics",
@@ -14,9 +15,10 @@ const subjects = ["Demo Request", "Partnership", "Support", "Press / Media"];
 
 export function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
@@ -34,7 +36,38 @@ export function ContactForm() {
     }
 
     setErrors({});
-    setSubmitted(true);
+    setSubmitting(true);
+
+    try {
+      const payload = {
+        name:     data.get("name")?.toString() ?? "",
+        company:  data.get("company")?.toString() ?? "",
+        email:    data.get("email")?.toString() ?? "",
+        phone:    data.get("phone")?.toString() ?? "",
+        industry: data.get("industry")?.toString() ?? "",
+        subject:  data.get("subject")?.toString() ?? "",
+        message:  data.get("message")?.toString() ?? "",
+      };
+
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const result = await res.json().catch(() => null);
+        setErrors({ form: result?.error ?? "Failed to send. Please try again." });
+        return;
+      }
+
+      toast.success('Message sent! We will get back to you within 24 hours.');
+      setSubmitted(true);
+    } catch {
+      setErrors({ form: "Network error. Please try again." });
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (submitted) {
@@ -54,6 +87,11 @@ export function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+      {errors.form && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+          {errors.form}
+        </div>
+      )}
       <div className="grid gap-5 sm:grid-cols-2">
         <Input name="name" label="Name *" placeholder="Your full name" error={errors.name} />
         <Input name="company" label="Company" placeholder="Your company name" />
@@ -107,8 +145,8 @@ export function ContactForm() {
           <p id="message-error" className="mt-1 text-sm text-danger" role="alert">{errors.message}</p>
         )}
       </div>
-      <Button type="submit" size="lg" className="w-full sm:w-auto">
-        Send Message
+      <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={submitting}>
+        {submitting ? "Sending..." : "Send Message"}
       </Button>
     </form>
   );

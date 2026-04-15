@@ -6,7 +6,7 @@ import { ScrollReveal } from "@/components/ui/scroll-reveal";
 export const metadata: Metadata = {
   title: "Trust Center — Security, Privacy & Transparency",
   description: "Learn about Infometa's commitment to security, privacy, and transparency. SOC2-ready, GDPR-aligned, and built with security-by-design principles.",
-  alternates: { canonical: "https://infometa.tech/trust" },
+  alternates: { canonical: "https://infometa.in/trust" },
 };
 
 const sections = [

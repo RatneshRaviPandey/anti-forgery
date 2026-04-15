@@ -32,8 +32,8 @@ const registerSchema = z.object({
 export async function POST(req: NextRequest) {
   const ip = getClientIP(req);
 
-  // Rate limit: 3 registrations per hour per IP
-  const block = await applyRateLimit(req, `reg:${ip}`, 50, 3600);
+  // Rate limit: 5 registrations per hour per IP
+  const block = await applyRateLimit(req, `reg:${ip}`, 5, 3600);
   if (block) return block;
 
   let body: unknown;
@@ -73,8 +73,7 @@ export async function POST(req: NextRequest) {
       country,
       plan:       'starter',
       status:     'trial',
-      emailVerified: true, // auto-verify for now
-      emailVerifiedAt: new Date(),
+      emailVerified: false,
       trialEndsAt: addDays(new Date(), 14),
     }).returning();
 

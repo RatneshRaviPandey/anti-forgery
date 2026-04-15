@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import toast from "react-hot-toast";
 import type { VerifyResult } from "@/lib/mock-data";
 
 interface ResultCardProps {
@@ -10,6 +12,28 @@ interface ResultCardProps {
 }
 
 export function ResultCard({ result, className }: ResultCardProps) {
+  const [reported, setReported] = useState(false);
+
+  async function reportProduct(token: string, productName: string) {
+    if (reported) { toast('Already reported'); return; }
+    try {
+      const res = await fetch('/api/reports/counterfeit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, message: `Reported from verify page: ${productName}` }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success('Report submitted! Thank you for helping fight counterfeiting.');
+        setReported(true);
+      } else {
+        toast.error(data.error || 'Failed to submit report');
+      }
+    } catch {
+      toast.error('Network error. Please try again.');
+    }
+  }
+
   if (result.status === "authentic") {
     return (
       <motion.div
@@ -68,7 +92,8 @@ export function ResultCard({ result, className }: ResultCardProps) {
           <p className="font-medium">Warning</p>
           <p>{result.message}</p>
         </div>
-        <button className="mt-3 rounded-lg bg-warning px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors">
+        <button className="mt-3 rounded-lg bg-warning px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 transition-colors"
+          onClick={() => reportProduct(result.product?.sku || '', result.product?.name || '')}>
           Report This Product
         </button>
       </motion.div>
@@ -94,12 +119,13 @@ export function ResultCard({ result, className }: ResultCardProps) {
         <p>{result.message}</p>
       </div>
       <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-        <button className="rounded-lg bg-danger px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors">
+        <button className="rounded-lg bg-danger px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
+          onClick={() => reportProduct('unknown', 'Unknown product')}>
           Report Counterfeit
         </button>
-        <button className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-tint transition-colors">
+        <a href="/industries" className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-tint transition-colors text-center">
           Find Authorized Retailer
-        </button>
+        </a>
       </div>
     </motion.div>
   );

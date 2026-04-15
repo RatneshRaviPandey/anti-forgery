@@ -7,7 +7,7 @@ import { Save } from "lucide-react";
 
 export default function SettingsPage() {
   const [cloneThreshold, setCloneThreshold] = useState("3");
-  const [alertEmail, setAlertEmail] = useState("admin@infometa.tech");
+  const [alertEmail, setAlertEmail] = useState("admin@infometa.in");
   const [webhookUrl, setWebhookUrl] = useState("");
   const [brandName, setBrandName] = useState("DairyFresh Co.");
   const [verifyPageLogo, setVerifyPageLogo] = useState("/images/logo.png");

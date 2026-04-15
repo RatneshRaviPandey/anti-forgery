@@ -56,7 +56,7 @@ export default function AdminBrandKeysPage() {
   async function fetchKeys() {
     setLoading(true);
     const res = await fetch('/api/superadmin/brand-keys', {
-      headers: { Authorization: `Bearer ${token}` },
+      credentials: 'include',
     });
     const data = await res.json();
     if (data.success) setKeys(data.data);
@@ -65,7 +65,7 @@ export default function AdminBrandKeysPage() {
 
   async function fetchBrands() {
     const res = await fetch('/api/superadmin/brands?limit=100', {
-      headers: { Authorization: `Bearer ${token}` },
+      credentials: 'include',
     });
     const data = await res.json();
     if (data.success) setBrands(data.data.map((b: { id: string; name: string }) => ({ id: b.id, name: b.name })));
@@ -74,9 +74,8 @@ export default function AdminBrandKeysPage() {
   async function handleCreate() {
     if (!selectedBrand) return;
     setCreating(true);
-    const res = await fetch('/api/superadmin/brand-keys', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    const res = await fetch('/api/superadmin/brand-keys', { credentials: 'include', method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ brandId: selectedBrand, expiryDays, notes: notes || undefined }),
     });
     const data = await res.json();
@@ -90,9 +89,8 @@ export default function AdminBrandKeysPage() {
 
   async function handleRevoke(id: string) {
     if (!confirm('Revoke this key? Brands using it will no longer generate valid codes.')) return;
-    await fetch(`/api/superadmin/brand-keys/${id}`, {
-      method: 'PUT',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    await fetch(`/api/superadmin/brand-keys/${id}`, { credentials: 'include', method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'revoke' }),
     });
     fetchKeys();

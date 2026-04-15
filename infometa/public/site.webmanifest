@@ -1,0 +1,12 @@
+{
+  "name": "Infometa Technologies",
+  "short_name": "Infometa",
+  "description": "Real-time QR-based product authentication and anti-counterfeit verification platform. Scan. Verify. Trust.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0F766E",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

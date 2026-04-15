@@ -1,0 +1,18 @@
+{
+  "name": "detoxify",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Social Media Detox & Mindfulness Mobile App",
+  "scripts": {
+    "install-all": "cd api && npm install && cd ../mobile && npm install",
+    "api:dev": "cd api && npm run dev",
+    "api:build": "cd api && npm run build",
+    "mobile:start": "cd mobile && npm start",
+    "mobile:android": "cd mobile && npm run android",
+    "mobile:ios": "cd mobile && npm run ios",
+    "db:up": "docker-compose up -d",
+    "db:down": "docker-compose down",
+    "db:migrate": "cd api && npm run db:push",
+    "test": "cd api && npm test && cd ../mobile && npm test"
+  }
+}

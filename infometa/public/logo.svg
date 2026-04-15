@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40" fill="none">
+  <text x="0" y="30" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="32" font-weight="700" fill="#0F766E" letter-spacing="-0.5">
+    Info<tspan fill="#134E4A">meta</tspan>
+  </text>
+  <rect x="168" y="8" width="6" height="6" rx="1" fill="#0F766E" opacity="0.6"/>
+  <rect x="176" y="8" width="6" height="6" rx="1" fill="#0F766E" opacity="0.3"/>
+  <rect x="168" y="16" width="6" height="6" rx="1" fill="#0F766E" opacity="0.3"/>
+  <rect x="176" y="16" width="6" height="6" rx="1" fill="#0F766E" opacity="0.6"/>
+</svg>

@@ -1,6 +1,5 @@
 "use client";
 
-import { scanChartData, scans as mockScans, products as mockProducts, alerts as mockAlerts } from "@/lib/mock-data";
 import { useDashboardSummary, useAnalytics } from "@/hooks/use-api";
 import { KPITile } from "@/components/ui/kpi-tile";
 import {
@@ -18,18 +17,13 @@ import {
 } from "recharts";
 
 export default function ReportsPage() {
-  const { data: summary } = useDashboardSummary();
-  const { data: analytics } = useAnalytics('30d');
+  const { data: summary, isLoading: summaryLoading } = useDashboardSummary();
+  const { data: analytics, isLoading: analyticsLoading } = useAnalytics('30d');
 
-  // Use API data or fall back to mock data
-  const scans = mockScans;
-  const products = mockProducts;
-  const alerts = mockAlerts;
-
-  const totalScans = summary?.totalScans ?? scans.length;
-  const authenticScans = summary?.authenticScans ?? scans.filter((s) => s.resultStatus === "authentic").length;
-  const suspiciousScans = summary?.suspiciousScans ?? scans.filter((s) => s.resultStatus === "suspicious").length;
-  const invalidScans = summary?.invalidScans ?? scans.filter((s) => s.resultStatus === "invalid").length;
+  const totalScans = summary?.totalScans ?? 0;
+  const authenticScans = summary?.authenticScans ?? 0;
+  const suspiciousScans = summary?.suspiciousScans ?? 0;
+  const invalidScans = summary?.invalidScans ?? 0;
 
   const pieData = [
     { name: "Authentic", value: authenticScans, color: "#16A34A" },
@@ -37,19 +31,10 @@ export default function ReportsPage() {
     { name: "Invalid", value: invalidScans, color: "#DC2626" },
   ];
 
-  // Top cities from API analytics or mock
-  const topCities = analytics?.scansByCity ?? (() => {
-    const cityMap: Record<string, number> = {};
-    scans.forEach((s) => {
-      cityMap[s.location.city] = (cityMap[s.location.city] || 0) + 1;
-    });
-    return Object.entries(cityMap)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 8)
-      .map(([city, count]) => ({ city, count }));
-  })();
+  // Top cities from API analytics
+  const topCities = analytics?.scansByCity ?? [];
 
-  const dailyData = analytics?.scansByDay ?? scanChartData;
+  const dailyData = analytics?.scansByDay ?? [];
   return (
     <div className="space-y-6">
       <div>
@@ -61,8 +46,8 @@ export default function ReportsPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KPITile label="Total Scans" value={totalScans.toLocaleString()} trend="+12%" trendUp />
         <KPITile label="Authentic Rate" value={totalScans > 0 ? `${((authenticScans / totalScans) * 100).toFixed(1)}%` : '0%'} trend="+0.5%" trendUp />
-        <KPITile label="Active Alerts" value={String(summary?.openAlerts ?? alerts.filter((a) => !a.resolved).length)} trend="-2" trendUp={false} />
-        <KPITile label="Products Monitored" value={String(summary?.products ?? products.length)} trend="+1" trendUp />
+        <KPITile label="Active Alerts" value={String(summary?.openAlerts ?? 0)} trend="" trendUp={false} />
+        <KPITile label="Products Monitored" value={String(summary?.products ?? 0)} trend="" trendUp />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">

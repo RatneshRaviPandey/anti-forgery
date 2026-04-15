@@ -20,7 +20,7 @@ export const industryEnum = pgEnum('industry', [
 export const brandStatusEnum = pgEnum('brand_status', [
   'pending_verification', 'active', 'suspended', 'trial', 'churned',
 ]);
-export const userRoleEnum = pgEnum('user_role', ['owner', 'admin', 'viewer']);
+export const userRoleEnum = pgEnum('user_role', ['owner', 'admin', 'analyst', 'viewer']);
 
 // ─── BRANDS ──────────────────────────────────────────────────────
 export const brands = pgTable('brands', {
@@ -119,8 +119,8 @@ export const qrCodes = pgTable('qr_codes', {
 export const scans = pgTable('scans', {
   id:           uuid('id').primaryKey().defaultRandom(),
   token:        text('token').notNull(),
-  productId:    uuid('product_id'),
-  brandId:      uuid('brand_id'),
+  productId:    uuid('product_id').references(() => products.id),
+  brandId:      uuid('brand_id').references(() => brands.id),
   scannedAt:    timestamp('scanned_at').defaultNow(),
   resultStatus: scanResultEnum('result_status').notNull(),
   city:         text('city'),
@@ -366,3 +366,42 @@ export const invitationsRelations = relations(invitations, ({ one }) => ({
 export const brandKeysRelations = relations(brandKeys, ({ one }) => ({
   brand: one(brands, { fields: [brandKeys.brandId], references: [brands.id] }),
 }));
+
+// ─── INQUIRIES ───────────────────────────────────────────────
+export const inquiryTypeEnum = pgEnum('inquiry_type', [
+  'contact', 'demo_request', 'counterfeit_report', 'feedback', 'support',
+]);
+export const inquiryStatusEnum = pgEnum('inquiry_status', [
+  'new', 'in_progress', 'resolved', 'closed',
+]);
+export const inquiryPriorityEnum = pgEnum('inquiry_priority', [
+  'low', 'medium', 'high', 'urgent',
+]);
+
+export const inquiries = pgTable('inquiries', {
+  id:          uuid('id').primaryKey().defaultRandom(),
+  type:        inquiryTypeEnum('type').notNull().default('contact'),
+  name:        text('name').notNull(),
+  email:       text('email').notNull(),
+  phone:       text('phone'),
+  company:     text('company'),
+  industry:    text('industry'),
+  subject:     text('subject'),
+  message:     text('message').notNull(),
+  token:       text('token'),                    // QR token for counterfeit reports
+  brandId:     uuid('brand_id').references(() => brands.id),
+  status:      inquiryStatusEnum('status').default('new'),
+  priority:    inquiryPriorityEnum('priority').default('low'),
+  assignedTo:  uuid('assigned_to'),
+  notes:       text('notes'),                    // admin internal notes
+  resolvedAt:  timestamp('resolved_at'),
+  resolvedBy:  text('resolved_by'),
+  ipAddress:   text('ip_address'),
+  userAgent:   text('user_agent'),
+  createdAt:   timestamp('created_at').defaultNow(),
+  updatedAt:   timestamp('updated_at').defaultNow(),
+}, (table) => [
+  index('inquiries_type_idx').on(table.type),
+  index('inquiries_status_idx').on(table.status),
+  index('inquiries_created_at_idx').on(table.createdAt),
+]);

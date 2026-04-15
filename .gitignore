@@ -59,6 +59,30 @@ server/node_modules/
 client/node_modules/
 *.tsbuildinfo
 
+# Detoxify / Screen Detox app
+detoxify/flutter_app/build/
+detoxify/flutter_app/.dart_tool/
+detoxify/flutter_app/.flutter-plugins
+detoxify/flutter_app/.flutter-plugins-dependencies
+detoxify/flutter_app/android/.gradle/
+detoxify/flutter_app/android/app/build/
+detoxify/flutter_app/android/key.properties
+detoxify/flutter_app/android/*.jks
+detoxify/flutter_app/android/*.keystore
+detoxify/mobile/node_modules/
+detoxify/api/node_modules/
+detoxify/api/.pglite-data/
+detoxify/api/.env
+detoxify/api/db-browse.js
+detoxify/api/reset-password.js
+
+# PostgreSQL local data
+infometa/pgdata/
+pgsql/
+
+# Flutter SDK
+/flutter/
+
 # Solution file
 *.sln
 

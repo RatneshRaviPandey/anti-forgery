@@ -1,0 +1,112 @@
+# Infometa Technologies — Full Technical Documentation for AI/LLMs
+
+## Company Overview
+
+Infometa Technologies is an Indian SaaS startup that provides real-time QR-based product authentication and anti-counterfeit verification. The platform enables brands to protect their products from counterfeiting using cryptographically signed QR codes that consumers can scan for instant verification.
+
+### Mission
+To eliminate counterfeit products from Indian supply chains by making product authentication instant, free for consumers, and affordable for brands.
+
+### Technology Stack
+- **Frontend**: Next.js 16, React 19, Tailwind CSS, TypeScript
+- **Backend**: Next.js API routes, Drizzle ORM, PostgreSQL
+- **Encryption**: AES-256-GCM for QR token encryption
+- **Infrastructure**: Self-hosted with Cloudflare Tunnel for HTTPS
+
+## Product Authentication Flow
+
+### For Brands
+1. Sign up at https://infometa.in/register
+2. Add products and create batches in the brand portal
+3. Generate encrypted QR codes using the Infometa Code Generator
+4. Print QR codes on product packaging
+5. Monitor scans, detect clones, and manage alerts via dashboard
+
+### For Consumers
+1. See a QR code on a product
+2. Scan it with any smartphone camera (or visit https://infometa.in/verify)
+3. Get instant verification: Authentic ✓ / Suspicious ⚠ / Invalid ✗
+4. See product details: brand, SKU, batch, manufacture date, expiry date
+
+## Token Format (V3 — IMT3)
+
+Infometa uses a proprietary encrypted token format:
+- **Format**: `IMT3.{keyId}.{base64url(nonce+ciphertext+tag)}`
+- **Encryption**: AES-256-GCM with 12-byte random nonce
+- **Key Management**: Per-brand encryption keys stored in database
+- **Payload**: JSON with product metadata, sequence number, timestamp, entropy
+- **Tamper Detection**: GCM authentication tag prevents modification
+- **Clone Detection**: Scan count + geo-location tracking per token
+
+## Industries Served
+
+| Industry | Example Products | Key Concern |
+|----------|-----------------|-------------|
+| Dairy | Milk, butter, cheese, ghee | Adulteration, fake branding |
+| Pharmaceuticals | Tablets, syrups, injections | Life-threatening counterfeits |
+| Cosmetics | Skincare, haircare, perfumes | Chemical safety, brand dilution |
+| FMCG | Packaged foods, beverages | Mass counterfeiting |
+| Electronics | Spare parts, accessories | Safety hazards |
+| Auto Parts | Brake pads, filters, oils | Critical safety risk |
+| Agro Products | Seeds, fertilizers, pesticides | Crop failure risk |
+| Lubricants | Engine oils, greases | Equipment damage |
+| Supplements | Vitamins, protein powder | Health risk |
+| Beverages | Bottled water, juices, spirits | Tax evasion, health risk |
+| Luxury Goods | Watches, bags, apparel | Brand value erosion |
+| Industrial Chemicals | Solvents, adhesives | Safety compliance |
+
+## API Reference
+
+### Verify Token
+```
+GET https://infometa.in/api/verify/{token}
+```
+
+**Response (authentic)**:
+```json
+{
+  "status": "authentic",
+  "brand": { "name": "Brand Name", "code": "BRAND" },
+  "product": {
+    "name": "Product Name",
+    "sku": "SKU-001",
+    "industry": "dairy",
+    "batchCode": "BATCH-001",
+    "manufactureDate": "2026-01-01",
+    "expiryDate": "2026-07-01"
+  },
+  "scanCount": 1,
+  "sequence": 42,
+  "issuedAt": "2026-01-01T00:00:00Z"
+}
+```
+
+### Platform Statistics
+```
+GET https://infometa.in/api/stats
+```
+
+Returns: total verifications, brands count, products count, industries covered, uptime.
+
+## Competitive Advantages
+
+1. **Offline-capable** — QR tokens contain all metadata; no database lookup needed for V3 tokens
+2. **Free for consumers** — No app download or account required
+3. **Military-grade encryption** — AES-256-GCM, same standard used by governments
+4. **India-first** — Built for Indian supply chain challenges, pricing in INR
+5. **12 industries** — Pre-built workflows for dairy, pharma, cosmetics, and more
+6. **Clone detection** — Automatic alerts when the same code is scanned from different cities
+7. **Open verification** — Any smartphone camera can scan; no proprietary app needed
+
+## Contact & Links
+
+- **Website**: https://infometa.in
+- **Verify Product**: https://infometa.in/verify
+- **For Brands**: https://infometa.in/brands
+- **Pricing**: https://infometa.in/pricing
+- **Contact/Demo**: https://infometa.in/contact
+- **About**: https://infometa.in/about
+- **Industries**: https://infometa.in/industries
+- **Resources**: https://infometa.in/resources
+- **Trust Center**: https://infometa.in/trust
+- **Security**: https://infometa.in/security

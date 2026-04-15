@@ -6,7 +6,8 @@ import { eq } from 'drizzle-orm';
 import { apiResponse } from '@/lib/utils/response';
 
 export async function GET(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '');
+  const token = req.cookies.get('infometa-session')?.value
+    ?? req.headers.get('authorization')?.replace('Bearer ', '');
   if (!token) return apiResponse.unauthorized('No token');
 
   const session = await validateSession(token);
@@ -34,10 +35,13 @@ export async function GET(req: NextRequest) {
       isSuperAdmin:       user.isSuperAdmin ?? false,
     },
     brand: brand ? {
-      id:   brand.id,
-      name: brand.name,
-      logo: brand.logoUrl,
-      plan: brand.plan,
+      id:           brand.id,
+      name:         brand.name,
+      logo:         brand.logoUrl,
+      plan:         brand.plan,
+      status:       brand.status,
+      trialEndsAt:  brand.trialEndsAt?.toISOString() ?? null,
+      isActive:     brand.isActive,
     } : null,
   });
 }

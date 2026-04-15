@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { usePortalAuth } from '../../layout';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 const INDUSTRIES = [
   'dairy', 'pharma', 'cosmetics', 'fmcg', 'agro_products',
@@ -27,16 +28,14 @@ export default function NewProduct() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/products', {
-        method: 'POST',
+      const res = await fetch('/api/products', { credentials: 'include', method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(form),
-      });
+          },
+        body: JSON.stringify(form), });
       const data = await res.json();
       if (!data.success) { setError(data.error || 'Failed'); setLoading(false); return; }
+      toast.success('Product created successfully!');
       router.push('/portal/products');
     } catch {
       setError('Network error');

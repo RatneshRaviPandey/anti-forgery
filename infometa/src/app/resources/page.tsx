@@ -8,7 +8,7 @@ import { ScrollReveal } from "@/components/ui/scroll-reveal";
 export const metadata: Metadata = {
   title: "Resources — Anti-Counterfeit Technology Blog & Guides",
   description: "Expert guides, insights, and analysis on product authentication, QR verification, clone detection, and brand protection technology from Infometa Technologies.",
-  alternates: { canonical: "https://infometa.tech/resources" },
+  alternates: { canonical: "https://infometa.in/resources" },
 };
 
 export default function ResourcesPage() {

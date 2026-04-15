@@ -8,11 +8,11 @@ import { JsonLd } from "@/components/seo/json-ld";
 export const metadata: Metadata = {
   title: "About Us",
   description: "Infometa Technologies: Making every product verifiable and every consumer confident. Learn about our mission, team, and approach to anti-counterfeit technology.",
-  alternates: { canonical: "https://infometa.tech/about" },
+  alternates: { canonical: "https://infometa.in/about" },
   openGraph: {
     title: "About Infometa Technologies",
     description: "Making every product verifiable and every consumer confident.",
-    url: "https://infometa.tech/about",
+    url: "https://infometa.in/about",
   },
 };
 
@@ -20,7 +20,7 @@ const aboutJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Infometa Technologies",
-  url: "https://infometa.tech",
+  url: "https://infometa.in",
   description: "Real-time QR-based product authentication and anti-counterfeit verification platform.",
   foundingDate: "2023",
   founder: { "@type": "Person", name: "Founding Team" },

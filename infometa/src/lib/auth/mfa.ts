@@ -6,6 +6,8 @@ function getMfaEncryptionKey(): Buffer {
     if (process.env.NODE_ENV === 'production') {
       throw new Error('MFA_ENCRYPTION_KEY must be 64 hex chars (256-bit)');
     }
+    // Dev-only deterministic key — NEVER used in production (guarded above)
+    console.warn('[MFA] Using dev-only encryption key. Set MFA_ENCRYPTION_KEY for production.');
     return Buffer.from('0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', 'hex');
   }
   return Buffer.from(key, 'hex');

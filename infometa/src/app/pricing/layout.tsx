@@ -6,11 +6,11 @@ export const metadata: Metadata = {
   title: "Pricing — Anti-Counterfeit Product Authentication Plans",
   description:
     "Simple, transparent pricing for Infometa's QR-based product authentication platform. Starter, Growth, and Enterprise plans with 14-day free trial.",
-  alternates: { canonical: "https://infometa.tech/pricing" },
+  alternates: { canonical: "https://infometa.in/pricing" },
   openGraph: {
     title: "Pricing | Infometa Technologies",
     description: "Choose your anti-counterfeit protection plan. Start with a 14-day free trial.",
-    url: "https://infometa.tech/pricing",
+    url: "https://infometa.in/pricing",
   },
 };
 

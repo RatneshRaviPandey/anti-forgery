@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 import { generateQRBuffer } from '@/lib/qr/generate';
 import { apiResponse } from '@/lib/utils/response';
 
-const BASE_URL = process.env.QR_VERIFY_BASE_URL || 'https://infometa.tech/verify';
+const BASE_URL = process.env.QR_VERIFY_BASE_URL || 'https://infometa.in/verify';
 
 export async function GET(
   _req: NextRequest,

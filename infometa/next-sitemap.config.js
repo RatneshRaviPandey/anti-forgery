@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: "https://infometa.tech",
+  siteUrl: "https://infometa.in",
   generateRobotsTxt: true,
   generateIndexSitemap: true,
   changefreq: "weekly",
@@ -11,7 +11,7 @@ module.exports = {
     policies: [
       { userAgent: "*", allow: "/", disallow: ["/admin", "/api/"] },
     ],
-    additionalSitemaps: ["https://infometa.tech/sitemap.xml"],
+    additionalSitemaps: ["https://infometa.in/sitemap.xml"],
   },
   transform: async (config, path) => {
     // Higher priority for key pages

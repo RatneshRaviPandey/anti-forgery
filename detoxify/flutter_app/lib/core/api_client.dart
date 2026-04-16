@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class ApiClient {
   // Your laptop's WiFi IP — phone connects here over same WiFi
   // Emulator uses 10.0.2.2 to reach host machine
-  static const _lanIp = '192.168.1.9';
+  static const _lanIp = '192.168.0.107';
   static const _port = '4000';
 
   static String get _baseUrl {

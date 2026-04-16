@@ -108,6 +108,15 @@ class AppBlockerService {
     }
   }
 
+  /// Sync per-app goals to native SharedPrefs for AccessibilityService
+  Future<void> syncAppGoals(String goalsJson) async {
+    try {
+      await _channel.invokeMethod('syncAppGoals', {'goalsJson': goalsJson});
+    } on PlatformException {
+      // ignore
+    }
+  }
+
   Future<void> setBlockedApps(List<String> packageNames) async {
     try {
       await _channel.invokeMethod('setBlockedApps', {'packages': packageNames});

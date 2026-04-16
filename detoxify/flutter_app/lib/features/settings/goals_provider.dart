@@ -84,7 +84,10 @@ class GoalsNotifier extends StateNotifier<GoalsState> {
   Future<void> _save() async {
     final p = await SharedPreferences.getInstance();
     await p.setInt('daily_goal_minutes', state.dailyGoalMinutes);
-    await p.setString('app_goals', json.encode(state.appGoals));
+    final goalsJson = json.encode(state.appGoals);
+    await p.setString('app_goals', goalsJson);
+    // Sync to native SharedPrefs so AccessibilityService can read them
+    try { await _blocker.syncAppGoals(goalsJson); } catch (_) {}
   }
 
   void setDailyGoal(int mins) {

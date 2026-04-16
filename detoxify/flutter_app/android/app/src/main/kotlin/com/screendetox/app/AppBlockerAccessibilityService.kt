@@ -37,9 +37,9 @@ class AppBlockerAccessibilityService : AccessibilityService() {
         val mode = prefs.getString("blocking_mode", "none") ?: "none"
         if (mode == "none") return
 
-        // Read per-app goals from Flutter SharedPreferences
-        val goalsJson = getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
-            .getString("flutter.app_goals", null) ?: return
+        // Read per-app goals synced from Flutter via MethodChannel
+        val goalsJson = getSharedPreferences("detoxify_blocker", Context.MODE_PRIVATE)
+            .getString("app_goals_json", null) ?: return
 
         var limit: Int? = null
         try {

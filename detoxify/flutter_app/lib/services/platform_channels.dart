@@ -117,6 +117,24 @@ class AppBlockerService {
     }
   }
 
+  /// Sync tracked apps list to native SharedPrefs
+  Future<void> syncTrackedApps(String appsJson) async {
+    try {
+      await _channel.invokeMethod('syncTrackedApps', {'appsJson': appsJson});
+    } on PlatformException {
+      // ignore
+    }
+  }
+
+  /// Sync daily goal to native SharedPrefs
+  Future<void> syncDailyGoal(int minutes) async {
+    try {
+      await _channel.invokeMethod('syncDailyGoal', {'minutes': minutes});
+    } on PlatformException {
+      // ignore
+    }
+  }
+
   Future<void> setBlockedApps(List<String> packageNames) async {
     try {
       await _channel.invokeMethod('setBlockedApps', {'packages': packageNames});

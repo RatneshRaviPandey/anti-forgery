@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/constants.dart';
+import '../../services/platform_channels.dart';
 
 const _key = 'tracked_apps';
 
@@ -25,6 +27,8 @@ class TrackedAppsNotifier extends StateNotifier<Set<String>> {
   Future<void> _save() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList(_key, state.toList());
+    // Sync to native for AccessibilityService blocking
+    try { await AppBlockerService().syncTrackedApps(json.encode(state.toList())); } catch (_) {}
   }
 
   void toggle(String packageName) {

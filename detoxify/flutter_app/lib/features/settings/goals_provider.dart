@@ -93,6 +93,8 @@ class GoalsNotifier extends StateNotifier<GoalsState> {
   void setDailyGoal(int mins) {
     state = state.copyWith(dailyGoalMinutes: mins.clamp(15, 720));
     _save();
+    // Sync daily goal to native for AccessibilityService
+    try { _blocker.syncDailyGoal(mins.clamp(15, 720)); } catch (_) {}
   }
 
   void setAppGoal(String pkg, int mins) {

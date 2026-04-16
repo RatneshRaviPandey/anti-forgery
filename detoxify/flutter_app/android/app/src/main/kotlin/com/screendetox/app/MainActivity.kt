@@ -74,6 +74,18 @@ class MainActivity : FlutterActivity() {
                         .edit().putString("app_goals_json", goalsJson).apply()
                     result.success(null)
                 }
+                "syncTrackedApps" -> {
+                    val appsJson = call.argument<String>("appsJson") ?: "[]"
+                    getSharedPreferences("detoxify_blocker", Context.MODE_PRIVATE)
+                        .edit().putString("tracked_apps_json", appsJson).apply()
+                    result.success(null)
+                }
+                "syncDailyGoal" -> {
+                    val minutes = call.argument<Int>("minutes") ?: 120
+                    getSharedPreferences("detoxify_blocker", Context.MODE_PRIVATE)
+                        .edit().putInt("daily_goal_minutes", minutes).apply()
+                    result.success(null)
+                }
                 "setBlockedApps" -> {
                     val packages = call.argument<List<String>>("packages") ?: emptyList()
                     getSharedPreferences("detoxify_blocker", Context.MODE_PRIVATE)

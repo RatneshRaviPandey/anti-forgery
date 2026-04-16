@@ -170,10 +170,17 @@ class UsageTrackingNotifier extends StateNotifier<UsageTrackingState> {
       rawData = await _service.getLocalUsageData();
     }
 
-    // Filter by tracked apps
-    final filtered = trackedApps.isEmpty
-        ? rawData
-        : rawData.where((e) => trackedApps.contains(e['packageName'] as String)).toList();
+    // If no apps selected, show empty — prompt user to select apps
+    if (trackedApps.isEmpty) {
+      state = state.copyWith(
+        todayUsage: [], totalSeconds: 0, totalMinutes: 0,
+        lastUpdated: DateTime.now(), todayDate: today,
+      );
+      return;
+    }
+
+    // Filter by tracked apps only
+    final filtered = rawData.where((e) => trackedApps.contains(e['packageName'] as String)).toList();
 
     // Build usage list with reset offsets applied
     final usage = filtered.map((e) {

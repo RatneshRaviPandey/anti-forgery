@@ -101,7 +101,15 @@ class BlockOverlayActivity : Activity() {
                 setTextColor(Color.parseColor("#9CA3AF"))
                 setBackgroundColor(Color.TRANSPARENT)
                 isAllCaps = false
-                setOnClickListener { finish() }
+                setOnClickListener {
+                    // Grant 5-minute cooldown before re-blocking
+                    val pkg = intent.getStringExtra("package_name") ?: ""
+                    if (pkg.isNotEmpty()) {
+                        AppBlockerAccessibilityService.continueAllowedUntil[pkg] =
+                            System.currentTimeMillis() + AppBlockerAccessibilityService.CONTINUE_COOLDOWN_MS
+                    }
+                    finish()
+                }
             })
         }
 

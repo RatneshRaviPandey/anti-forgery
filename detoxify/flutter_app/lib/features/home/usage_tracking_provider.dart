@@ -24,6 +24,7 @@ class UsageTrackingState {
   final int totalMinutes;
   final DateTime? lastUpdated;
   final bool isLoading;
+  final String? todayDate; // YYYY-MM-DD, for daily reset detection
 
   const UsageTrackingState({
     this.isTracking = false,
@@ -32,6 +33,7 @@ class UsageTrackingState {
     this.totalMinutes = 0,
     this.lastUpdated,
     this.isLoading = true,
+    this.todayDate,
   });
 
   UsageTrackingState copyWith({
@@ -41,6 +43,7 @@ class UsageTrackingState {
     int? totalMinutes,
     DateTime? lastUpdated,
     bool? isLoading,
+    String? todayDate,
   }) {
     return UsageTrackingState(
       isTracking: isTracking ?? this.isTracking,
@@ -49,6 +52,7 @@ class UsageTrackingState {
       totalMinutes: totalMinutes ?? this.totalMinutes,
       lastUpdated: lastUpdated ?? this.lastUpdated,
       isLoading: isLoading ?? this.isLoading,
+      todayDate: todayDate ?? this.todayDate,
     );
   }
 }
@@ -107,13 +111,19 @@ class UsageTrackingNotifier extends StateNotifier<UsageTrackingState> {
 
   Future<void> fetchUsage() async {
     final trackedApps = _ref.read(trackedAppsProvider);
+    final today = getDateString();
 
-    // Try locally cached data from the foreground service first
-    var rawData = await _service.getLocalUsageData();
+    // Daily reset: if date changed since last fetch, clear old data
+    if (state.todayDate != null && state.todayDate != today) {
+      state = state.copyWith(todayUsage: [], totalMinutes: 0, todayDate: today);
+    }
 
-    // Fallback to direct query
+    // Always use direct query — most accurate, real-time data
+    var rawData = await _service.getUsageStats(today);
+
+    // Fallback to cached data from foreground service
     if (rawData.isEmpty) {
-      rawData = await _service.getUsageStats(getDateString());
+      rawData = await _service.getLocalUsageData();
     }
 
     // Filter by tracked apps (if any selected)
@@ -137,6 +147,17 @@ class UsageTrackingNotifier extends StateNotifier<UsageTrackingState> {
       todayUsage: usage,
       totalMinutes: (totalSec / 60).round(),
       lastUpdated: DateTime.now(),
+      todayDate: today,
+    );
+  }
+
+  /// Manual reset — clears today's displayed data (native data resets at midnight automatically)
+  void resetToday() {
+    state = state.copyWith(
+      todayUsage: [],
+      totalMinutes: 0,
+      lastUpdated: DateTime.now(),
+      todayDate: getDateString(),
     );
   }
 }

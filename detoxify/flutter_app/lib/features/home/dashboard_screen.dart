@@ -21,11 +21,35 @@ final streaksProvider = FutureProvider<List<Streak>>((ref) async {
   }
 });
 
-class DashboardScreen extends ConsumerWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
+  @override
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends ConsumerState<DashboardScreen> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Auto-refresh usage data when user returns to the app
+    if (state == AppLifecycleState.resumed) {
+      ref.read(usageTrackingProvider.notifier).fetchUsage();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final auth = ref.watch(authProvider);
     final usageState = ref.watch(usageTrackingProvider);
     final streaksAsync = ref.watch(streaksProvider);
@@ -215,9 +239,47 @@ class _RealUsageCard extends ConsumerWidget {
             const SizedBox(height: 16),
             Text('No usage recorded yet today', style: TextStyle(color: AppColors.textHint, fontSize: 13)),
           ],
+          // Last updated + actions row
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                usageState.lastUpdated != null
+                    ? 'Updated ${_formatTime(usageState.lastUpdated!)}'
+                    : 'Not yet synced',
+                style: TextStyle(fontSize: 11, color: AppColors.textHint),
+              ),
+              Row(children: [
+                GestureDetector(
+                  onTap: () => ref.read(usageTrackingProvider.notifier).fetchUsage(),
+                  child: Row(children: [
+                    Icon(Icons.refresh, size: 14, color: AppColors.primary),
+                    const SizedBox(width: 3),
+                    Text('Refresh', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.primary)),
+                  ]),
+                ),
+                const SizedBox(width: 16),
+                GestureDetector(
+                  onTap: () => ref.read(usageTrackingProvider.notifier).resetToday(),
+                  child: Row(children: [
+                    Icon(Icons.restart_alt, size: 14, color: AppColors.textHint),
+                    const SizedBox(width: 3),
+                    Text('Reset', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textHint)),
+                  ]),
+                ),
+              ]),
+            ],
+          ),
         ],
       ),
     );
+  }
+
+  static String _formatTime(DateTime dt) {
+    final h = dt.hour.toString().padLeft(2, '0');
+    final m = dt.minute.toString().padLeft(2, '0');
+    return '$h:$m';
   }
 }
 

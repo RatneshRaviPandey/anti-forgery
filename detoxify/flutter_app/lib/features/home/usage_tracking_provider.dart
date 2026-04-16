@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/platform_channels.dart';
 import '../settings/tracked_apps_provider.dart';
 import '../../core/utils.dart';
@@ -6,15 +8,21 @@ import '../../core/utils.dart';
 class AppUsageLocal {
   final String appName;
   final String packageName;
-  final int durationSeconds;
+  final int durationSeconds; // Raw OS value
+  final int offsetSeconds;   // Subtracted on reset
 
   const AppUsageLocal({
     required this.appName,
     required this.packageName,
     required this.durationSeconds,
+    this.offsetSeconds = 0,
   });
 
-  int get durationMinutes => (durationSeconds / 60).round();
+  /// Effective seconds after reset offset applied
+  int get effectiveSeconds => (durationSeconds - offsetSeconds).clamp(0, 999999);
+
+  /// Floor division — consistent with total calculation
+  int get effectiveMinutes => effectiveSeconds ~/ 60;
 }
 
 class UsageTrackingState {
@@ -22,15 +30,17 @@ class UsageTrackingState {
   final bool hasPermission;
   final List<AppUsageLocal> todayUsage;
   final int totalMinutes;
+  final int totalSeconds;
   final DateTime? lastUpdated;
   final bool isLoading;
-  final String? todayDate; // YYYY-MM-DD, for daily reset detection
+  final String? todayDate;
 
   const UsageTrackingState({
     this.isTracking = false,
     this.hasPermission = false,
     this.todayUsage = const [],
     this.totalMinutes = 0,
+    this.totalSeconds = 0,
     this.lastUpdated,
     this.isLoading = true,
     this.todayDate,
@@ -41,6 +51,7 @@ class UsageTrackingState {
     bool? hasPermission,
     List<AppUsageLocal>? todayUsage,
     int? totalMinutes,
+    int? totalSeconds,
     DateTime? lastUpdated,
     bool? isLoading,
     String? todayDate,
@@ -50,6 +61,7 @@ class UsageTrackingState {
       hasPermission: hasPermission ?? this.hasPermission,
       todayUsage: todayUsage ?? this.todayUsage,
       totalMinutes: totalMinutes ?? this.totalMinutes,
+      totalSeconds: totalSeconds ?? this.totalSeconds,
       lastUpdated: lastUpdated ?? this.lastUpdated,
       isLoading: isLoading ?? this.isLoading,
       todayDate: todayDate ?? this.todayDate,
@@ -61,11 +73,16 @@ class UsageTrackingNotifier extends StateNotifier<UsageTrackingState> {
   final UsageTrackerService _service = UsageTrackerService();
   final Ref _ref;
 
+  /// Stored offsets: packageName → seconds at time of last reset
+  Map<String, int> _resetOffsets = {};
+  String _resetDate = '';
+
   UsageTrackingNotifier(this._ref) : super(const UsageTrackingState()) {
     _init();
   }
 
   Future<void> _init() async {
+    await _loadResetOffsets();
     try {
       final hasPerm = await _service.hasPermission();
       state = state.copyWith(hasPermission: hasPerm);
@@ -75,6 +92,33 @@ class UsageTrackingNotifier extends StateNotifier<UsageTrackingState> {
       }
     } catch (_) {}
     state = state.copyWith(isLoading: false);
+  }
+
+  /// Load saved reset offsets from SharedPreferences
+  Future<void> _loadResetOffsets() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _resetDate = prefs.getString('reset_date') ?? '';
+      final j = prefs.getString('reset_offsets');
+      if (j != null) {
+        final decoded = json.decode(j) as Map<String, dynamic>;
+        _resetOffsets = decoded.map((k, v) => MapEntry(k, v as int));
+      }
+      // New day → clear offsets (automatic daily reset)
+      if (_resetDate != getDateString()) {
+        _resetOffsets = {};
+        _resetDate = getDateString();
+        await _saveResetOffsets();
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _saveResetOffsets() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('reset_offsets', json.encode(_resetOffsets));
+      await prefs.setString('reset_date', _resetDate);
+    } catch (_) {}
   }
 
   Future<void> checkAndRequestPermission() async {
@@ -113,52 +157,74 @@ class UsageTrackingNotifier extends StateNotifier<UsageTrackingState> {
     final trackedApps = _ref.read(trackedAppsProvider);
     final today = getDateString();
 
-    // Daily reset: if date changed since last fetch, clear old data
-    if (state.todayDate != null && state.todayDate != today) {
-      state = state.copyWith(todayUsage: [], totalMinutes: 0, todayDate: today);
+    // Auto daily reset of offsets at midnight
+    if (_resetDate != today) {
+      _resetOffsets = {};
+      _resetDate = today;
+      await _saveResetOffsets();
     }
 
-    // Always use direct query — most accurate, real-time data
+    // Direct query from UsageStatsManager (most accurate real-time)
     var rawData = await _service.getUsageStats(today);
-
-    // Fallback to cached data from foreground service
     if (rawData.isEmpty) {
       rawData = await _service.getLocalUsageData();
     }
 
-    // Filter by tracked apps (if any selected)
+    // Filter by tracked apps
     final filtered = trackedApps.isEmpty
         ? rawData
         : rawData.where((e) => trackedApps.contains(e['packageName'] as String)).toList();
 
-    final usage = filtered
-        .map((e) => AppUsageLocal(
-              appName: e['appName'] as String? ?? 'Unknown',
-              packageName: e['packageName'] as String? ?? '',
-              durationSeconds: e['durationSeconds'] as int? ?? 0,
-            ))
-        .where((e) => e.durationSeconds > 0)
-        .toList()
-      ..sort((a, b) => b.durationSeconds.compareTo(a.durationSeconds));
+    // Build usage list with reset offsets applied
+    final usage = filtered.map((e) {
+      final pkg = e['packageName'] as String? ?? '';
+      final rawSec = e['durationSeconds'] as int? ?? 0;
+      final offset = _resetOffsets[pkg] ?? 0;
+      return AppUsageLocal(
+        appName: e['appName'] as String? ?? 'Unknown',
+        packageName: pkg,
+        durationSeconds: rawSec,
+        offsetSeconds: offset,
+      );
+    }).where((e) => e.effectiveSeconds > 0).toList()
+      ..sort((a, b) => b.effectiveSeconds.compareTo(a.effectiveSeconds));
 
-    final totalSec = usage.fold<int>(0, (sum, e) => sum + e.durationSeconds);
+    // Total from effective values — sum THEN divide (no rounding mismatch)
+    final totalEffSec = usage.fold<int>(0, (s, e) => s + e.effectiveSeconds);
 
     state = state.copyWith(
       todayUsage: usage,
-      totalMinutes: (totalSec / 60).round(),
+      totalSeconds: totalEffSec,
+      totalMinutes: totalEffSec ~/ 60, // floor — matches per-app effectiveMinutes
       lastUpdated: DateTime.now(),
       todayDate: today,
     );
   }
 
-  /// Manual reset — clears today's displayed data (native data resets at midnight automatically)
-  void resetToday() {
+  /// Reset ALL apps: saves current OS values as offsets → next fetch shows 0
+  Future<void> resetToday() async {
+    for (final app in state.todayUsage) {
+      _resetOffsets[app.packageName] = app.durationSeconds;
+    }
+    _resetDate = getDateString();
+    await _saveResetOffsets();
     state = state.copyWith(
       todayUsage: [],
       totalMinutes: 0,
+      totalSeconds: 0,
       lastUpdated: DateTime.now(),
       todayDate: getDateString(),
     );
+  }
+
+  /// Reset a single app's timer
+  Future<void> resetApp(String packageName) async {
+    final app = state.todayUsage.where((a) => a.packageName == packageName).firstOrNull;
+    if (app != null) {
+      _resetOffsets[packageName] = app.durationSeconds;
+      await _saveResetOffsets();
+      await fetchUsage();
+    }
   }
 }
 

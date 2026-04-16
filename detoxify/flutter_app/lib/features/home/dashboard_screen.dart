@@ -220,7 +220,7 @@ class _RealUsageCard extends ConsumerWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(2),
                         child: LinearProgressIndicator(
-                          value: total > 0 ? app.durationMinutes / total : 0,
+                          value: total > 0 ? app.effectiveMinutes / total : 0,
                           backgroundColor: AppColors.border,
                           color: AppColors.primary,
                         ),
@@ -229,7 +229,7 @@ class _RealUsageCard extends ConsumerWidget {
                   ],
                 )),
                 const SizedBox(width: 8),
-                Text(formatMinutes(app.durationMinutes), style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.textSecondary, fontSize: 13)),
+                Text(formatMinutes(app.effectiveMinutes), style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.textSecondary, fontSize: 13)),
               ]),
             )),
           ] else if (!usageState.hasPermission) ...[

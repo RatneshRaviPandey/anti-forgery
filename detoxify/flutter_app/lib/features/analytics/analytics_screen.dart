@@ -71,14 +71,14 @@ class AnalyticsScreen extends ConsumerWidget {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(2),
                               child: LinearProgressIndicator(
-                                value: total > 0 ? app.durationMinutes / total : 0,
+                                value: total > 0 ? app.effectiveMinutes / total : 0,
                                 minHeight: 4, backgroundColor: AppColors.border, color: AppColors.primary,
                               ),
                             ),
                           ]),
                         ),
                         const SizedBox(width: 12),
-                        Text(formatMinutes(app.durationMinutes), style: TextStyle(fontWeight: FontWeight.w500, color: AppColors.textSecondary)),
+                        Text(formatMinutes(app.effectiveMinutes), style: TextStyle(fontWeight: FontWeight.w500, color: AppColors.textSecondary)),
                       ]),
                     );
                   }).toList(),
